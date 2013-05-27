@@ -1,0 +1,408 @@
+******************************************************************************
+                  TI ARM Linker PC v5.0.4                      
+******************************************************************************
+>> Linked Sun May 26 22:08:03 2013
+
+OUTPUT FILE NAME:   <Grocery.out>
+ENTRY POINT SYMBOL: "_c_int00"  address: 00001629
+
+
+MEMORY CONFIGURATION
+
+         name            origin    length      used     unused   attr    fill
+----------------------  --------  ---------  --------  --------  ----  --------
+  FLASH                 00000000   00040000  00001e24  0003e1dc  R  X
+  SRAM                  20000000   00008000  0000086b  00007795  RW X
+
+
+SEGMENT ALLOCATION MAP
+
+run origin  load origin   length   init length attrs members
+----------  ----------- ---------- ----------- ----- -------
+00000000    00000000    00001e28   00001e28    r-x
+  00000000    00000000    00001914   00001914    r-x .text
+  00001914    00001914    000004b0   000004b0    r-- .const
+  00001dc8    00001dc8    00000060   00000060    r-- .cinit
+20000000    20000000    00000818   00000000    rw-
+  20000000    20000000    00000418   00000000    rw- .bss
+  20000418    20000418    00000400   00000000    rw- .stack
+20000818    20000818    00000053   00000053    rw-
+  20000818    20000818    00000053   00000053    rw- .data
+
+
+SECTION ALLOCATION MAP
+
+ output                                  attributes/
+section   page    origin      length       input sections
+--------  ----  ----------  ----------   ----------------
+.bootVecs 
+*          0    00000000    00000008     DSECT
+                  00000000    00000008     boot.aem4f : boot.oem4f (.bootVecs)
+
+xdc.meta   0    00000000    00000000     COPY SECTION
+
+xdc.noload 
+*          0    00000000    00000000     COPY SECTION
+
+.text      0    00000000    00001914     
+                  00000000    00000534     Ps2Keyboard.obj (.text)
+                  00000534    0000041c     st7565.obj (.text)
+                  00000950    00000314     Graphics_Bmp.obj (.text)
+                  00000c64    00000250     main.obj (.text)
+                  00000eb4    000001d8     driverlib-cm4f.lib : sysctl.obj (.text:SysCtlClockGet)
+                  0000108c    000001a4     buttons.obj (.text)
+                  00001230    000000d8     Clock.obj (.text)
+                  00001308    000000c8     driverlib-cm4f.lib : gpio.obj (.text:GPIOPadConfigSet)
+                  000013d0    000000a0     auto_init.aem4f : auto_init.oem4f (.text)
+                  00001470    0000009c     rtsv7M4_T_le_v4SPD16_eabi.lib : memcpy_t2.obj (.text)
+                  0000150c    00000064     driverlib-cm4f.lib : interrupt.obj (.text:IntEnable)
+                  00001570    0000005e     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_decompress_rle.obj (.text)
+                  000015ce    00000002     --HOLE-- [fill = 0]
+                  000015d0    00000058     driverlib-cm4f.lib : sysctl.obj (.text:SysCtlPeripheralEnable)
+                  00001628    00000058     boot.aem4f : boot.oem4f (.text)
+                  00001680    00000048     driverlib-cm4f.lib : gpio.obj (.text:GPIOPinConfigure)
+                  000016c8    00000044                        : gpio.obj (.text:GPIOIntTypeSet)
+                  0000170c    00000044                        : ssi.obj (.text:SSIConfigSetExpClk)
+                  00001750    00000044     rtsv7M4_T_le_v4SPD16_eabi.lib : cpy_tbl.obj (.text)
+                  00001794    00000040                                   : exit.obj (.text)
+                  000017d4    0000002e     driverlib-cm4f.lib : gpio.obj (.text:GPIODirModeSet)
+                  00001802    00000002     --HOLE-- [fill = 0]
+                  00001804    00000028                        : timer.obj (.text:TimerConfigure)
+                  0000182c    00000018     rtsv7M4_T_le_v4SPD16_eabi.lib : args_main.obj (.text)
+                  00001844    00000014                                   : _lock.obj (.text)
+                  00001858    00000012     driverlib-cm4f.lib : gpio.obj (.text:GPIOPinTypeGPIOOutput)
+                  0000186a    00000012                        : gpio.obj (.text:GPIOPinTypeSSI)
+                  0000187c    00000012                        : timer.obj (.text:TimerLoadSet)
+                  0000188e    00000012     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_zero_init.obj (.text:decompress:ZI)
+                  000018a0    0000000e     driverlib-cm4f.lib : gpio.obj (.text:GPIOPinIntDisable)
+                  000018ae    0000000e                        : timer.obj (.text:TimerEnable)
+                  000018bc    0000000e     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_decompress_none.obj (.text:decompress:none)
+                  000018ca    0000000c     driverlib-cm4f.lib : gpio.obj (.text:GPIOPinIntEnable)
+                  000018d6    0000000a                        : gpio.obj (.text:GPIOPinWrite)
+                  000018e0    0000000a                        : ssi.obj (.text:SSIDataPut)
+                  000018ea    0000000a                        : ssi.obj (.text:SSIEnable)
+                  000018f4    00000008                        : ssi.obj (.text:SSIBusy)
+                  000018fc    00000008                        : timer.obj (.text:TimerIntEnable)
+                  00001904    00000006                        : gpio.obj (.text:GPIOPinIntClear)
+                  0000190a    00000006     rtsv7M4_T_le_v4SPD16_eabi.lib : copy_decompress_rle.obj (.text:decompress:rle24)
+                  00001910    00000004     driverlib-cm4f.lib : timer.obj (.text:TimerIntClear)
+
+.init_array 
+*          0    00000000    00000000     UNINITIALIZED
+
+.const     0    00001914    000004b0     
+                  00001914    000001b6     Font.obj (.const:.string:MyFont)
+                  00001aca    00000002     --HOLE-- [fill = 0]
+                  00001acc    000000ac     scancodes.obj (.const:shifted)
+                  00001b78    000000ac     scancodes.obj (.const:unshifted)
+                  00001c24    00000078     driverlib-cm4f.lib : gpio.obj (.const:g_pulGPIOBaseAddrs)
+                  00001c9c    00000070                        : interrupt.obj (.const)
+                  00001d0c    0000006c                        : sysctl.obj (.const:g_pulXtals)
+                  00001d78    00000040                        : sysctl.obj (.const)
+                  00001db8    0000000c     main.obj (.const:.string)
+
+.cinit     0    00001dc8    00000060     
+                  00001dc8    00000037     (.cinit..data.load) [load image, compression = rle]
+                  00001dff    00000001     --HOLE-- [fill = 0]
+                  00001e00    0000000c     (__TI_handler_table)
+                  00001e0c    00000004     --HOLE-- [fill = 0]
+                  00001e10    00000008     (.cinit..bss.load) [load image, compression = zero_init]
+                  00001e18    00000010     (__TI_cinit_table)
+
+.bss       0    20000000    00000418     UNINITIALIZED
+                  20000000    00000400     st7565.obj (.bss:glcd_buffer)
+                  20000400    0000000c     Graphics_Bmp.obj (.bss)
+                  2000040c    0000000b     Ps2Keyboard.obj (.bss)
+                  20000417    00000001     st7565.obj (.bss)
+
+.stack     0    20000418    00000400     UNINITIALIZED
+                  20000418    00000400     --HOLE--
+
+.data      0    20000818    00000053     
+                  20000818    00000024     st7565.obj (.data)
+                  2000083c    0000000c     Ps2Keyboard.obj (.data)
+                  20000848    00000008     rtsv7M4_T_le_v4SPD16_eabi.lib : _lock.obj (.data)
+                  20000850    00000008                                   : exit.obj (.data)
+                  20000858    00000006     buttons.obj (.data)
+                  2000085e    00000002     --HOLE--
+                  20000860    00000004     rtsv7M4_T_le_v4SPD16_eabi.lib : stkdepth_vars.obj (.data)
+                  20000864    00000003     Clock.obj (.data)
+                  20000867    00000001     --HOLE--
+                  20000868    00000003     main.obj (.data)
+
+
+LINKER GENERATED COPY TABLES
+
+__TI_cinit_table @ 00001e18 records: 2, size/record: 8, table size: 16
+	.data: load addr=00001dc8, load size=00000037 bytes, run addr=20000818, run size=00000053 bytes, compression=rle
+	.bss: load addr=00001e10, load size=00000008 bytes, run addr=20000000, run size=00000418 bytes, compression=zero_init
+
+
+LINKER GENERATED HANDLER TABLE
+
+__TI_handler_table @ 00001e00 records: 3, size/record: 4, table size: 12
+	index: 0, handler: __TI_decompress_rle24
+	index: 1, handler: __TI_decompress_none
+	index: 2, handler: __TI_zero_init
+
+
+GLOBAL SYMBOLS: SORTED ALPHABETICALLY BY Name 
+
+address    name
+--------   ----
+0000108d   ButtonISR
+00001193   ButtonTask
+00001145   ButtonsInit
+0000109b   ButtonsPoll
+00000465   Byte_Reverse
+00001795   C$$EXIT
+00001231   ClockInit
+20000840   Data
+UNDEFED    DataSem
+000000e9   Decode
+00000001   FSSIntHandler
+000017d5   GPIODirModeSet
+000016c9   GPIOIntTypeSet
+00001309   GPIOPadConfigSet
+00001681   GPIOPinConfigure
+00001905   GPIOPinIntClear
+000018a1   GPIOPinIntDisable
+000018cb   GPIOPinIntEnable
+00001859   GPIOPinTypeGPIOOutput
+0000186b   GPIOPinTypeSSI
+000018d7   GPIOPinWrite
+0000039d   GetKey
+00000b41   GlcdDispTime
+0000150d   IntEnable
+20000410   KeyBuf
+20000844   KeyBuffer
+20000414   KeyIn
+20000415   KeyOut
+000003ed   KeyPend
+20000416   KeyRead
+000004dd   KeyScan
+UNDEFED    KeySem
+0000042d   KeyTask
+00000065   KeyboardInit
+2000086a   LastState
+00001914   MyFont
+00000359   PutKeyBuf
+UNDEFED    SHT$$INIT_ARRAY$$Base
+UNDEFED    SHT$$INIT_ARRAY$$Limit
+000018f5   SSIBusy
+0000170d   SSIConfigSetExpClk
+000018e1   SSIDataPut
+000018eb   SSIEnable
+20000868   StateInfo
+00000eb5   SysCtlClockGet
+000015d1   SysCtlPeripheralEnable
+00000130   TSK_idle
+000012c1   TimeGet
+20000858   TimeOfDay
+000012d7   TimeSet
+00001271   Timer0IntHandler
+00001805   TimerConfigure
+000018af   TimerEnable
+00001911   TimerIntClear
+000018fd   TimerIntEnable
+0000187d   TimerLoadSet
+00000c9b   UiTask
+20000818   __STACK_END
+00000400   __STACK_SIZE
+20000618   __STACK_TOP
+00001e18   __TI_CINIT_Base
+00001e28   __TI_CINIT_Limit
+00001e00   __TI_Handler_Table_Base
+00001e0c   __TI_Handler_Table_Limit
+00000001   __TI_args_main
+000013d1   __TI_auto_init
+000018bd   __TI_decompress_none
+0000190b   __TI_decompress_rle24
+00000000   __TI_static_base__
+0000188f   __TI_zero_init
+00001471   __aeabi_memcpy
+00001471   __aeabi_memcpy4
+00001471   __aeabi_memcpy8
+ffffffff   __binit__
+ffffffff   __c_args__
+20000418   __stack
+0000182d   _args_main
+00001629   _c_int00
+20000850   _cleanup_ptr
+20000854   _dtors_ptr
+20000848   _lock
+00001853   _nop
+0000184b   _register_lock
+00001845   _register_unlock
+2000084c   _unlock
+00001799   abort
+ffffffff   binit
+00001751   copy_in
+00000a05   draw_char_bmp
+00000951   draw_text_bmp
+000017a1   exit
+000005eb   glcd_blank
+20000000   glcd_buffer
+000007f9   glcd_command
+000008f3   glcd_contrast
+000007b9   glcd_data
+20000417   glcd_dirty_pages
+00000839   glcd_flip_screen
+20000818   glcd_flipped
+000006e5   glcd_init
+0000086d   glcd_inverse_screen
+00000535   glcd_pixel
+00000665   glcd_refresh
+0000088d   glcd_test_card
+00000e09   main
+20000860   main_func_sp
+00001471   memcpy
+2000081c   pagemap
+00001acc   shifted
+00000c65   taskFxn
+2000083c   temp_count
+2000040c   temp_count_string
+UNDEFED    ti_sysbios_BIOS_start__E
+UNDEFED    ti_sysbios_knl_Semaphore_pend__E
+UNDEFED    ti_sysbios_knl_Semaphore_post__E
+UNDEFED    ti_sysbios_knl_Task_sleep__E
+20000400   time_string
+00001b78   unshifted
+00000001   xdc_runtime_Startup__EXECFXN__C
+00000001   xdc_runtime_Startup__RESETFXN__C
+UNDEFED    xdc_runtime_Startup_exec__E
+UNDEFED    xdc_runtime_Startup_reset__I
+UNDEFED    xdc_runtime_System_flush__E
+UNDEFED    xdc_runtime_System_printf__E
+
+
+GLOBAL SYMBOLS: SORTED BY Symbol Address 
+
+address    name
+--------   ----
+00000000   __TI_static_base__
+00000001   FSSIntHandler
+00000001   __TI_args_main
+00000001   xdc_runtime_Startup__EXECFXN__C
+00000001   xdc_runtime_Startup__RESETFXN__C
+00000065   KeyboardInit
+000000e9   Decode
+00000130   TSK_idle
+00000359   PutKeyBuf
+0000039d   GetKey
+000003ed   KeyPend
+00000400   __STACK_SIZE
+0000042d   KeyTask
+00000465   Byte_Reverse
+000004dd   KeyScan
+00000535   glcd_pixel
+000005eb   glcd_blank
+00000665   glcd_refresh
+000006e5   glcd_init
+000007b9   glcd_data
+000007f9   glcd_command
+00000839   glcd_flip_screen
+0000086d   glcd_inverse_screen
+0000088d   glcd_test_card
+000008f3   glcd_contrast
+00000951   draw_text_bmp
+00000a05   draw_char_bmp
+00000b41   GlcdDispTime
+00000c65   taskFxn
+00000c9b   UiTask
+00000e09   main
+00000eb5   SysCtlClockGet
+0000108d   ButtonISR
+0000109b   ButtonsPoll
+00001145   ButtonsInit
+00001193   ButtonTask
+00001231   ClockInit
+00001271   Timer0IntHandler
+000012c1   TimeGet
+000012d7   TimeSet
+00001309   GPIOPadConfigSet
+000013d1   __TI_auto_init
+00001471   __aeabi_memcpy
+00001471   __aeabi_memcpy4
+00001471   __aeabi_memcpy8
+00001471   memcpy
+0000150d   IntEnable
+000015d1   SysCtlPeripheralEnable
+00001629   _c_int00
+00001681   GPIOPinConfigure
+000016c9   GPIOIntTypeSet
+0000170d   SSIConfigSetExpClk
+00001751   copy_in
+00001795   C$$EXIT
+00001799   abort
+000017a1   exit
+000017d5   GPIODirModeSet
+00001805   TimerConfigure
+0000182d   _args_main
+00001845   _register_unlock
+0000184b   _register_lock
+00001853   _nop
+00001859   GPIOPinTypeGPIOOutput
+0000186b   GPIOPinTypeSSI
+0000187d   TimerLoadSet
+0000188f   __TI_zero_init
+000018a1   GPIOPinIntDisable
+000018af   TimerEnable
+000018bd   __TI_decompress_none
+000018cb   GPIOPinIntEnable
+000018d7   GPIOPinWrite
+000018e1   SSIDataPut
+000018eb   SSIEnable
+000018f5   SSIBusy
+000018fd   TimerIntEnable
+00001905   GPIOPinIntClear
+0000190b   __TI_decompress_rle24
+00001911   TimerIntClear
+00001914   MyFont
+00001acc   shifted
+00001b78   unshifted
+00001e00   __TI_Handler_Table_Base
+00001e0c   __TI_Handler_Table_Limit
+00001e18   __TI_CINIT_Base
+00001e28   __TI_CINIT_Limit
+20000000   glcd_buffer
+20000400   time_string
+2000040c   temp_count_string
+20000410   KeyBuf
+20000414   KeyIn
+20000415   KeyOut
+20000416   KeyRead
+20000417   glcd_dirty_pages
+20000418   __stack
+20000618   __STACK_TOP
+20000818   __STACK_END
+20000818   glcd_flipped
+2000081c   pagemap
+2000083c   temp_count
+20000840   Data
+20000844   KeyBuffer
+20000848   _lock
+2000084c   _unlock
+20000850   _cleanup_ptr
+20000854   _dtors_ptr
+20000858   TimeOfDay
+20000860   main_func_sp
+20000868   StateInfo
+2000086a   LastState
+ffffffff   __binit__
+ffffffff   __c_args__
+ffffffff   binit
+UNDEFED    DataSem
+UNDEFED    KeySem
+UNDEFED    SHT$$INIT_ARRAY$$Base
+UNDEFED    SHT$$INIT_ARRAY$$Limit
+UNDEFED    ti_sysbios_BIOS_start__E
+UNDEFED    ti_sysbios_knl_Semaphore_pend__E
+UNDEFED    ti_sysbios_knl_Semaphore_post__E
+UNDEFED    ti_sysbios_knl_Task_sleep__E
+UNDEFED    xdc_runtime_Startup_exec__E
+UNDEFED    xdc_runtime_Startup_reset__I
+UNDEFED    xdc_runtime_System_flush__E
+UNDEFED    xdc_runtime_System_printf__E
+
+[124 symbols]
