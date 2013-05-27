@@ -38,14 +38,14 @@ UISTATE LastState=MAIN;
 Void taskFxn(UArg a0, UArg a1)
 {
 	while(1){
-    System_printf("enter taskFxn()\n");
-	System_flush();
+    //System_printf("enter taskFxn()\n");
+	//System_flush();
     Task_sleep(10);
     draw_text_bmp((INT8U *)"Text!",8,8,MyFont,1);
     glcd_refresh();
     //glcd_command(GLCD_CMD_ALL_ON);
-    System_printf("exit taskFxn()\n");
-    System_flush();
+    //System_printf("exit taskFxn()\n");
+    //SSystem_flush();
 	}
 }
 /*
@@ -58,6 +58,7 @@ Void UiTask(UArg a0, UArg a1)
 	INT8U upccount=0;
 	while(1){
 		//poll buttons
+		//Task_delete(testTask);
 		switch(StateInfo.UserState){
 			case WELCOME:
 				if(StateInfo.StateInit==TRUE){
