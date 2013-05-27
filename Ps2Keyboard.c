@@ -6,6 +6,10 @@
  */
 #include "Ps2Keyboard.h"
 #define NUM_SSI_DATA 11
+
+#define K_STARTBIT    1
+#define K_PARITYBIT  10
+#define K_STOPBIT    11
 INT8U temp_count=0;
 INT8U temp_count_string[4];
 unsigned long ulDataRx[NUM_SSI_DATA];
@@ -18,19 +22,55 @@ INT8U	KeyIn;				//Index into PS/2 key buf where next scan code will be inserted
 INT8U	KeyOut;				//Index into PS/2 key buf where next scan code will be removed
 INT8U	KeyRead;			//Number of keys read from the PS/2 keyboard
 INT8U 	KeyBuffer=0;
+INT8U	clkstat,datstat;
+INT8U paritystat;
+INT8U data;
+INT8U bitcount=0;
 /*======================================================================*/
 void
 FSSIntHandler(void){
+
 	GPIOPinIntClear(GPIO_PORTB_BASE,GPIO_PIN_4);
-	GPIOPinIntDisable(GPIO_PORTB_BASE,GPIO_PIN_4);
-	//SSIIntClear(SSI2_BASE,SSI_RXFF);
+	  clkstat = GPIOPinRead(GPIO_PORTB_BASE,GPIO_PIN_4);//check CLK pin state;
+	  datstat =GPIOPinRead(GPIO_PORTB_BASE,GPIO_PIN_6);//check DAT pin state;
+
+	  bitcount++;
+
+	  if (bitcount==K_STARTBIT)
+	    {
+	      if (datstat || clkstat)	bitcount=0;
+	      data=0;
+	      paritystat=0;
+
+	    }
+	  else if (bitcount==K_PARITYBIT)
+	    {
+	      paritystat = datstat;
+	    }
+	  else if (bitcount==K_STOPBIT)
+	    {
+	      Decode(data);
+	      bitcount=0;
+	    }
+	  else
+	    {
+	      // For all bits from 2, 3...9 (total 8-bit)
+	      data= data >> 1;
+	      if (datstat)
+	        data = data | 0x80;
+	    }
+
+#if 0
+	//GPIOPinIntDisable(GPIO_PORTB_BASE,GPIO_PIN_4);
+	SSIIntClear(SSI2_BASE,SSI_RXFF);
 
 #if 1
 	//BIT_CLR(GPIO_PORTB_BASE,GPIO_PIN_3);
 	while(SSI2_DR_R&01!=1){}//Wait till data
 	//Semaphore_post(DataSem);
 	Data=SSI2_DR_R;
-	SSI2_DR_R=0x00000000;
+	//SSI2_DR_R=0x7FFF;
+	//SSI2_DR_R=0xFFFF;
 	Data&=0x03FC;
 	Data>>=2;
 	Data=Byte_Reverse((INT8U)Data);
@@ -39,19 +79,20 @@ FSSIntHandler(void){
 	Data=0;
 	}else{/*Do nothing*/};
 #endif
+#endif
 	GPIOPinIntEnable(GPIO_PORTB_BASE,GPIO_PIN_4);
 }
 /*======================================================================*/
 void KeyboardInit(void){
-#if 0
-	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+#if 1
+	//SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
 
-	GPIOPinTypeGPIOInput(GPIO_PORTA_BASE,GPIO_PIN_6);
-	GPIOPinTypeGPIOOutput(GPIO_PORTA_BASE,GPIO_PIN_7);
-	GPIOIntTypeSet(GPIO_PORTA_BASE,GPIO_PIN_6,GPIO_RISING_EDGE);
-	GPIOPortIntRegister(GPIO_PORTA_BASE,KeyboardIntHandler);
-	GPIOPinIntEnable(GPIO_PORTA_BASE,GPIO_PIN_6);
-#endif
+	GPIOPinTypeGPIOInput(GPIO_PORTB_BASE,GPIO_PIN_4|GPIO_PIN_6);
+
+	GPIOIntTypeSet(GPIO_PORTB_BASE,GPIO_PIN_4,GPIO_RISING_EDGE);
+	//GPIOPortIntRegister(GPIO_PORTA_BASE,KeyboardIntHandler);
+
+#else
     //Initializing the pins
 	SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI2);
     //Enable Ports for use
@@ -68,7 +109,11 @@ void KeyboardInit(void){
 	//
 	// Enable the SSI module.
 	//
+	SSIIntEnable(SSI2_BASE,SSI_RXFF);
+
+
 	SSIEnable(SSI2_BASE);
+#endif
 	GPIOIntTypeSet(GPIO_PORTB_BASE,GPIO_PIN_4,GPIO_FALLING_EDGE);
 
 	GPIOPinIntEnable(GPIO_PORTB_BASE,GPIO_PIN_4);
