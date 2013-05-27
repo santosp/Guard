@@ -54,7 +54,7 @@ Void taskFxn(UArg a0, UArg a1)
 Void UiTask(UArg a0, UArg a1)
 {
 	INT8U key=0;
-	INT8U upcbuffer[12]={'0','0','0','0','0','0','0','0','0','0','0',0};
+	INT8U upcbuffer[12]={0,0,0,0,0,0,0,0,0,0,0,0};
 	INT8U upccount=0;
 	while(1){
 		//poll buttons

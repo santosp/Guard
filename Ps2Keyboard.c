@@ -122,7 +122,7 @@ void KeyboardInit(void){
 
 
 /*======================================================================*/
-INT8U Decode(INT8U sc)
+void Decode(INT8U sc)
 {
   static INT8U keyisup=FALSE, shift = FALSE,capslock=FALSE;//, mode = 0;
   INT8U i=0;
@@ -306,7 +306,7 @@ INT8U KeyScan(void){
 		//Data = Decode((INT8U)Data);
 		Data=0;
 	}else{
-		Data = Decode((INT8U)Data);
+		//Data = Decode((INT8U)Data);
 	}
 	return Data;
 }

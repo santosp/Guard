@@ -57,7 +57,7 @@ typedef enum{PS2START,PS2DATA,PS2PARITY,PS2STOP}PS2STATE;
 extern void KeyboardInit(void);
 
 
-extern INT8U Decode(INT8U sc);
+extern void Decode(INT8U sc);
 void PutKeyBuf(INT8U c);
 extern INT8U GetKey(void);
 INT8U Byte_Reverse(INT16U org);
