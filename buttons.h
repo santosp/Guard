@@ -41,12 +41,13 @@
 #define BUTTONS_GPIO_PERIP     SYSCTL_PERIPH_GPIOA
 #define BUTTONS_GPIO_BASE       GPIO_PORTA_BASE
 
-#define NUM_BUTTONS             3
+#define NUM_BUTTONS             4
 #define LEFT_BUTTON             GPIO_PIN_4
+#define DOWN_BUTTON             GPIO_PIN_3
 #define UP_BUTTON           	GPIO_PIN_6
 #define RIGHT_BUTTON			GPIO_PIN_7
 
-#define ALL_BUTTONS             (LEFT_BUTTON | UP_BUTTON | RIGHT_BUTTON)
+#define ALL_BUTTONS             (LEFT_BUTTON | DOWN_BUTTON |UP_BUTTON | RIGHT_BUTTON)
 
 //*****************************************************************************
 //

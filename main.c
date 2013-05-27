@@ -89,13 +89,17 @@ Void UiTask(UArg a0, UArg a1)
 					//Kill/Start tasks required
 					StateInfo.StateInit=FALSE;
 				}
-				else{//Do Rest of State code
-					key=KeyPend(1000);
-					if(key>0){
+				else{
+					key=KeyPend(10);
+					if(key>0&&key<0x7E){
 						upcbuffer[upccount]=key;
 						upccount++;
 						draw_text_bmp(upcbuffer,16,48,MyFont,1);
 					}
+					if(upccount>10){
+						upccount=0;
+					}
+					key=0;
 					draw_text_bmp((INT8U *)"ADD STATE ",16,40,MyFont,1);
 				}
 			break;

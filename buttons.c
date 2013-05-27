@@ -236,12 +236,12 @@ Void ButtonTask(UArg a0, UArg a1){
 
 			break;
 
-			//case DOWN_BUTTON:
+			case DOWN_BUTTON:
 				//code
-				//StateInfo.UserState = ADD;
+				StateInfo.UserState = ADD;
 				//set re-initialize variable
-				//StateInfo.StateInit = TRUE;
-			//break;
+				StateInfo.StateInit = TRUE;
+			break;
 
 			case UP_BUTTON:
 				//code
