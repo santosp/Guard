@@ -22,10 +22,13 @@
 #include "Code_Standards.h"
 #include "Clock.h"
 #include "Ps2Keyboard.h"
+
+#include "Items.h"
 /*=======*/
 //Globals
 UISTATEINFO StateInfo={REMOVE,TRUE}; // NEED TO START IN WELCOME not MAIN
 UISTATE LastState=MAIN;
+
 
 
 /*=======*/
@@ -55,7 +58,7 @@ Void UiTask(UArg a0, UArg a1)
 {
 	INT8U key=0;
 	INT8U upcbuffer[12]={0,0,0,0,0,0,0,0,0,0,0,0};
-	INT8U upccount=0;
+	INT8U upccount=0,inputcount=0;
 	while(1){
 		//poll buttons
 		//Task_delete(testTask);
@@ -98,6 +101,10 @@ Void UiTask(UArg a0, UArg a1)
 					}
 					if(upccount>10){
 						upccount=0;
+						//check for valid number
+						for(inputcount=0;(upcbuffer[inputcount]<='9'&&upcbuffer[inputcount]>='0')||inputcount>0;inputcount++);
+
+
 					}
 					key=0;
 					draw_text_bmp((INT8U *)"ADD STATE ",16,40,MyFont,1);

@@ -14,6 +14,7 @@ C_SRCS += \
 ../Encoder.c \
 ../Font.c \
 ../Graphics_Bmp.c \
+../Items.c \
 ../Ps2Keyboard.c \
 ../buttons.c \
 ../graphics.c \
@@ -26,6 +27,7 @@ OBJS += \
 ./Encoder.obj \
 ./Font.obj \
 ./Graphics_Bmp.obj \
+./Items.obj \
 ./Ps2Keyboard.obj \
 ./buttons.obj \
 ./graphics.obj \
@@ -42,6 +44,7 @@ C_DEPS += \
 ./Encoder.pp \
 ./Font.pp \
 ./Graphics_Bmp.pp \
+./Items.pp \
 ./Ps2Keyboard.pp \
 ./buttons.pp \
 ./graphics.pp \
@@ -70,6 +73,7 @@ C_DEPS__QUOTED += \
 "Encoder.pp" \
 "Font.pp" \
 "Graphics_Bmp.pp" \
+"Items.pp" \
 "Ps2Keyboard.pp" \
 "buttons.pp" \
 "graphics.pp" \
@@ -82,6 +86,7 @@ OBJS__QUOTED += \
 "Encoder.obj" \
 "Font.obj" \
 "Graphics_Bmp.obj" \
+"Items.obj" \
 "Ps2Keyboard.obj" \
 "buttons.obj" \
 "graphics.obj" \
@@ -94,6 +99,7 @@ C_SRCS__QUOTED += \
 "../Encoder.c" \
 "../Font.c" \
 "../Graphics_Bmp.c" \
+"../Items.c" \
 "../Ps2Keyboard.c" \
 "../buttons.c" \
 "../graphics.c" \

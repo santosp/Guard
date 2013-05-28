@@ -21,6 +21,14 @@ typedef struct{
 	INT8U StateInit;
 }UISTATEINFO;
 
+typedef struct{
+	INT8U Discription[16];
+	INT8U Experation[6];
+	INT8U Timestamp[6];
+	INT8U UPC[11];
+	INT8U Quantity;
+}ITEMINFO;
+
 #define TRUE 1
 #define FALSE 0
 
