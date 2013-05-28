@@ -20,6 +20,7 @@ typedef enum {INIT,GETUPC,INVALID,FIND,FOUND,NOMATCH}SUBSTATE;
 typedef struct{
 	UISTATE UserState;
 	SUBSTATE StateStatus;
+	INT8U	WaitforKey;
 }UISTATEINFO;
 
 typedef struct{

@@ -20,6 +20,14 @@
 #include "st7565.h"
 #include "Font.h"
 
+#define PAGE0 1
+#define PAGE1 9
+#define PAGE2 17
+#define PAGE3 25
+#define PAGE4 33
+#define PAGE5 41
+#define PAGE6 49
+#define PAGE7 57
 
 extern bounding_box_t draw_text_bmp(INT8U *string, unsigned char x, unsigned char y, const unsigned char *font, unsigned char spacing);
 
