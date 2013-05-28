@@ -26,11 +26,12 @@
 #include "Items.h"
 /*=======*/
 //Globals
-UISTATEINFO StateInfo={REMOVE,TRUE}; // NEED TO START IN WELCOME not MAIN
+UISTATEINFO StateInfo={REMOVE,GETUPC}; // NEED TO START IN WELCOME not MAIN
 UISTATE LastState=MAIN;
 
 
-
+extern INT8U ItemLookUp[][2];
+extern ITEMINFO ItemBlock1[25];
 /*=======*/
 
 /*
@@ -58,63 +59,207 @@ Void UiTask(UArg a0, UArg a1)
 {
 	INT8U key=0;
 	INT8U upcbuffer[12]={0,0,0,0,0,0,0,0,0,0,0,0};
-	INT8U upccount=0,inputcount=0;
+	INT8U upccount=0,inputcount=0,itemfound=0,lookupcount=0,upc_count=0;
 	while(1){
 		//poll buttons
 		//Task_delete(testTask);
 		switch(StateInfo.UserState){
 			case WELCOME:
-				if(StateInfo.StateInit==TRUE){
-				//draw_text_bmp((INT8U *)"Welcome To The Grocery Guard System",16,16,MyFont,1);
-				//draw_text_bmp((INT8U *)"Please Enter The Current Date in HH:MMPM/AM,MM/DD/YYYY Format",16,24,MyFont,1);
-				//draw_text_bmp((INT8U *)"Ex) 2:30PM , May 5th 2013",16,32,MyFont,1);
-				//draw_text_bmp((INT8U *)"02:30PM , 05/05/2013 ",16,40,MyFont,1);
-				StateInfo.StateInit=FALSE;
-				}
-				else{//Do Rest of State code
-					//KeyPend(timeout)
-				}
-				//Start KeyTask
+				switch (StateInfo.StateStatus){
+				case INIT:
+					//Initialize state
+					//draw_text_bmp((INT8U *)"Welcome To The Grocery Guard System",16,16,MyFont,1);
+					//draw_text_bmp((INT8U *)"Please Enter The Current Date in HH:MMPM/AM,MM/DD/YYYY Format",16,24,MyFont,1);
+					//draw_text_bmp((INT8U *)"Ex) 2:30PM , May 5th 2013",16,32,MyFont,1);
+					//draw_text_bmp((INT8U *)"02:30PM , 05/05/2013 ",16,40,MyFont,1);
+					//draw_text_bmp((INT8U *)"INV STATE ",16,40,MyFont,1);
+				break;//End of INIT State
+				/*-----------------------------------------------------------*/
+				case GETUPC:
+				break;//End of GETUPC State
+				/*-----------------------------------------------------------*/
+				case INVALID:
+					////invalid user input, i.e. non number characters,
+				break;//End of INVALID state
+				/*-----------------------------------------------------------*/
+				case FIND:
+				break;//End of FIND State
+				/*-----------------------------------------------------------*/
+				case FOUND:
+				break;//End of FOUND State
+				/*-----------------------------------------------------------*/
+				case NOMATCH:
+				break;//End of NOMATCH State
+				/*-----------------------------------------------------------*/
+				default:
+				break;//End of Default
+				}//End of StateStatus WELCOME switch
 
 			break;
+			/*===============================================================*/
 			case MAIN:
-				if(StateInfo.StateInit==TRUE){
-					//Kill/Start tasks required
-					StateInfo.StateInit=FALSE;
-				}
-				else{//Do Rest of State code
-					//KeyPend(timeout)
+				switch (StateInfo.StateStatus){
+				case INIT:
+					//Initialize state
+					//draw_text_bmp((INT8U *)"Welcome To The Grocery Guard System",16,16,MyFont,1);
+					//draw_text_bmp((INT8U *)"Please Enter The Current Date in HH:MMPM/AM,MM/DD/YYYY Format",16,24,MyFont,1);
+					//draw_text_bmp((INT8U *)"Ex) 2:30PM , May 5th 2013",16,32,MyFont,1);
+					//draw_text_bmp((INT8U *)"02:30PM , 05/05/2013 ",16,40,MyFont,1);
 					draw_text_bmp((INT8U *)"MAIN STATE ",16,40,MyFont,1);
-				}
-			break;
+				break;//End of INIT State
+				/*-----------------------------------------------------------*/
+				case GETUPC:
+				break;//End of GETUPC State
+				/*-----------------------------------------------------------*/
+				case INVALID:
+					////invalid user input, i.e. non number characters,
+				break;//End of INVALID state
+				/*-----------------------------------------------------------*/
+				case FIND:
+				break;//End of FIND State
+				/*-----------------------------------------------------------*/
+				case FOUND:
+				break;//End of FOUND State
+				/*-----------------------------------------------------------*/
+				case NOMATCH:
+				break;//End of NOMATCH State
+				/*-----------------------------------------------------------*/
+				default:
+				break;//End of Default
+				}//End of StateStatus MAIN switch
+
+			break;//END of MAIN State
+			/*===============================================================*/
 			case ADD:
-				if(StateInfo.StateInit==TRUE){
-					//Kill/Start tasks required
-					StateInfo.StateInit=FALSE;
-				}
-				else{
+				switch (StateInfo.StateStatus){
+				case INIT:
+					//Initialize state
+				break;//End of INIT State
+				/*-----------------------------------------------------------*/
+				case GETUPC:
 					key=KeyPend(10);
 					if(key>0&&key<0x7E){
 						upcbuffer[upccount]=key;
 						upccount++;
 						draw_text_bmp(upcbuffer,16,48,MyFont,1);
 					}
+					key=0;
 					if(upccount>10){
 						upccount=0;
-						//check for valid number
 						for(inputcount=0;(upcbuffer[inputcount]<='9'&&upcbuffer[inputcount]>='0')||inputcount>0;inputcount++);
-
-
+						if(inputcount>10){
+							//valid input
+							StateInfo.StateStatus=FIND;
+						}
+						else{
+							//invalid input, i.e. non number characters
+							StateInfo.StateStatus=INVALID;
+						}
+					}
+				break;//End of GETUPC State
+				/*-----------------------------------------------------------*/
+				case INVALID:
+					////invalid user input, i.e. non number characters,
+				break;//End of INVALID state
+				/*-----------------------------------------------------------*/
+				case FIND://Looks for a UPC match
+					for(lookupcount=0;(lookupcount<25||itemfound==1);lookupcount++){
+						if(ItemLookUp[lookupcount][1]>0){
+							for(upc_count=0;upcbuffer[upc_count]==ItemBlock1[lookupcount].UPC[upc_count]&&upc_count<11;upc_count++);
+							if(lookupcount<11){
+								//No match
+								//Give user option to either re enter or add to inventory
+								StateInfo.StateStatus = NOMATCH;
+							}
+							else{
+								//found item
+								itemfound=1;
+								StateInfo.StateStatus = FOUND;
+							}
+						}
+						else{
+							//No item of this UPC number
+							//Give user option to either re enter or add to inventory
+							StateInfo.StateStatus = NOMATCH;
+						}
+					}
+				break;//End of Find
+				/*-----------------------------------------------------------*/
+				case FOUND:
+				break;//End of FOUND
+				/*-----------------------------------------------------------*/
+				case NOMATCH:
+				break;//End of NOMATCH
+				/*-----------------------------------------------------------*/
+				default:
+				break;//End of default
+				}//End of StateStatus ADD switch
+			break;
+			/*===============================================================*/
+			case REMOVE:
+				switch (StateInfo.StateStatus){
+				case INIT:
+					//Initialize state
+				break;//End of INIT State
+				/*-----------------------------------------------------------*/
+				case GETUPC:
+					key=KeyPend(10);
+					if(key>0&&key<0x7E){
+						upcbuffer[upccount]=key;
+						upccount++;
+						draw_text_bmp(upcbuffer,16,48,MyFont,1);
 					}
 					key=0;
-					draw_text_bmp((INT8U *)"ADD STATE ",16,40,MyFont,1);
-				}
-			break;
-			case REMOVE:
-				if(StateInfo.StateInit==TRUE){
-					//Kill/Start tasks required
-					StateInfo.StateInit=FALSE;
-				}
+					if(upccount>10){
+						upccount=0;
+						for(inputcount=0;(upcbuffer[inputcount]<='9'&&upcbuffer[inputcount]>='0')||inputcount>0;inputcount++);
+						if(inputcount>10){
+							//valid input
+							StateInfo.StateStatus=FIND;
+						}
+						else{
+							//invalid input, i.e. non number characters
+							StateInfo.StateStatus=INVALID;
+						}
+					}
+				break;//End of GETUPC State
+				/*-----------------------------------------------------------*/
+				case INVALID:
+				break;//End of INVALID State
+				/*-----------------------------------------------------------*/
+				case FIND://Looks for a UPC match
+					for(lookupcount=0;(lookupcount<25||itemfound==1);lookupcount++){
+						if(ItemLookUp[lookupcount][1]>0){
+							for(upc_count=0;upcbuffer[upc_count]==ItemBlock1[lookupcount].UPC[upc_count]&&upc_count<11;upc_count++);
+							if(lookupcount<11){
+								//No match
+								//Give user option to either re enter or add to inventory
+								StateInfo.StateStatus = NOMATCH;
+							}
+							else{
+								//found item
+								itemfound=1;
+								StateInfo.StateStatus = FOUND;
+							}
+						}
+						else{
+							//No item of this UPC number
+							//Give user option to either re enter or add to inventory
+							StateInfo.StateStatus = NOMATCH;
+						}
+					}
+				break;//End of FIND State
+				/*-----------------------------------------------------------*/
+				case FOUND:
+				break;//End of FOUND State
+				/*-----------------------------------------------------------*/
+				case NOMATCH:
+				break;//End of NOMATCH State
+				/*-----------------------------------------------------------*/
+				default:
+				break;//End of Default
+				}//End of StateStatus REMOVE switch
+#if 0
 				else{key=KeyPend(10);
 					if(key>0&&key<0x7E){
 						upcbuffer[upccount]=key;
@@ -127,19 +272,40 @@ Void UiTask(UArg a0, UArg a1)
 					key=0;
 					draw_text_bmp((INT8U *)"REMOVE STATE ",16,40,MyFont,1);
 				}
-			break;
+#endif
+			break;//End of Remove State
+			/*===============================================================*/
 			case INV:
-				if(StateInfo.StateInit==TRUE){
-					//Kill/Start tasks required
-					StateInfo.StateInit=FALSE;
+				switch (StateInfo.StateStatus){
+				case INIT:
+					//Initialize state
 					draw_text_bmp((INT8U *)"INV STATE ",16,40,MyFont,1);
-				}
-				else{//Do Rest of State code
-					//KeyPend(timeout)
-				}
-			break;
+				break;//End of INIT State
+				/*-----------------------------------------------------------*/
+				case GETUPC:
+				break;//End of GETUPC State
+				/*-----------------------------------------------------------*/
+				case INVALID:
+					////invalid user input, i.e. non number characters,
+				break;//End of INVALID state
+				/*-----------------------------------------------------------*/
+				case FIND:
+				break;//End of FIND State
+				/*-----------------------------------------------------------*/
+				case FOUND:
+				break;//End of FOUND State
+				/*-----------------------------------------------------------*/
+				case NOMATCH:
+				break;//End of NOMATCH State
+				/*-----------------------------------------------------------*/
+				default:
+				break;//End of Default
+				}//End of StateStatus INV switch
+
+			break;//End of INV State
+			/*===============================================================*/
 			default:
-			break;
+			break;//End of Default
 		}
 
 	}

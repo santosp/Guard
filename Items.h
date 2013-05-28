@@ -11,6 +11,6 @@
 #include "Code_Standards.h"
 
 extern ITEMINFO ItemBlock1[25];
-extern INT8U ItemLookUp[][2];
+//extern INT8U ItemLookUp[][2];
 
 #endif /* ITEMS_H_ */

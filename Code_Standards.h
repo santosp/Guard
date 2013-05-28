@@ -16,9 +16,10 @@ typedef unsigned long   INT32U;
 typedef signed long     INT32S;
 
 typedef enum {WELCOME,MAIN,ADD,REMOVE,INV}UISTATE;
+typedef enum {INIT,GETUPC,INVALID,FIND,FOUND,NOMATCH}SUBSTATE;
 typedef struct{
 	UISTATE UserState;
-	INT8U StateInit;
+	SUBSTATE StateStatus;
 }UISTATEINFO;
 
 typedef struct{

@@ -231,7 +231,7 @@ Void ButtonTask(UArg a0, UArg a1){
 				////gatetKey = GateMutexPri_enter(gatemutexPri);//Dont Think I need Button Mutex
 				StateInfo.UserState = MAIN;
 				//set re-initialize variable
-				StateInfo.StateInit = TRUE;
+				StateInfo.StateStatus = INIT;
 				////GateMutexPri_leave(gateMutexPri,gateKey);
 
 			break;
@@ -240,7 +240,7 @@ Void ButtonTask(UArg a0, UArg a1){
 				//code
 				StateInfo.UserState = ADD;
 				//set re-initialize variable
-				StateInfo.StateInit = TRUE;
+				StateInfo.StateStatus = INIT;
 			break;
 
 			case UP_BUTTON:
@@ -248,7 +248,7 @@ Void ButtonTask(UArg a0, UArg a1){
 				//change state
 				StateInfo.UserState = REMOVE;
 				//set re-initialize variable
-				StateInfo.StateInit = TRUE;
+				StateInfo.StateStatus = INIT;
 			break;
 
 			case RIGHT_BUTTON:
@@ -256,7 +256,7 @@ Void ButtonTask(UArg a0, UArg a1){
 				//change state
 				StateInfo.UserState = INV;
 				//set re-initialize variable
-				StateInfo.StateInit = TRUE;
+				StateInfo.StateStatus = INIT;
 			break;
 
 			default:
