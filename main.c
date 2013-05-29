@@ -23,10 +23,12 @@
 #include "Clock.h"
 #include "Ps2Keyboard.h"
 
+#include "UiMessages.h"
+
 #include "Items.h"
 /*=======*/
 //Globals
-UISTATEINFO StateInfo={REMOVE,INIT,FALSE}; // NEED TO START IN WELCOME not MAIN
+UISTATEINFO StateInfo={REMOVE,INIT,FALSE}; // NEED TO START IN WELCOME not Remove
 UISTATE LastState=MAIN;
 
 
@@ -34,24 +36,7 @@ extern INT8U ItemLookUp[][2];
 extern ITEMINFO ItemBlock1[25];
 /*=======*/
 
-/*
- *  ======== taskFxn ========
- */
 
-
-Void taskFxn(UArg a0, UArg a1)
-{
-	while(1){
-    //System_printf("enter taskFxn()\n");
-	//System_flush();
-    Task_sleep(10);
-    draw_text_bmp((INT8U *)"Text!",8,PAGE1,MyFont,1);
-    glcd_refresh();
-    //glcd_command(GLCD_CMD_ALL_ON);
-    //System_printf("exit taskFxn()\n");
-    //SSystem_flush();
-	}
-}
 /*
  *  ======== taskFxn ========
  */
@@ -62,18 +47,18 @@ Void UiTask(UArg a0, UArg a1)
 	INT8U upccount=0,inputcount=0,itemfound=0,lookupcount=0,upc_count=0;
 	INT8U clearcount=0;
 	while(1){
-		//poll buttons
-		//Task_delete(testTask);
 		switch(StateInfo.UserState){
 			case WELCOME:
 				switch (StateInfo.StateStatus){
 				case INIT:
+					WelcomeMsg();
 					//Initialize state
+					//draw_text_bmp((INT8U *)"Welcome ",16,40,MyFont,1);
 					//draw_text_bmp((INT8U *)"Welcome To The Grocery Guard System",16,16,MyFont,1);
 					//draw_text_bmp((INT8U *)"Please Enter The Current Date in HH:MMPM/AM,MM/DD/YYYY Format",16,24,MyFont,1);
 					//draw_text_bmp((INT8U *)"Ex) 2:30PM , May 5th 2013",16,32,MyFont,1);
 					//draw_text_bmp((INT8U *)"02:30PM , 05/05/2013 ",16,40,MyFont,1);
-					//draw_text_bmp((INT8U *)"INV STATE ",16,40,MyFont,1);
+
 				break;//End of INIT State
 				/*-----------------------------------------------------------*/
 				case GETUPC:
@@ -139,7 +124,7 @@ Void UiTask(UArg a0, UArg a1)
 					StateInfo.StateStatus = GETUPC;
 					draw_text_bmp((INT8U *)"         ",16,PAGE3,MyFont,1);// clear found or not space
 					draw_text_bmp((INT8U *)"             ",16,PAGE6,MyFont,1);//clear upcbuffer space
-					for(clearcount=0;clearcount<11;clearcount++){// clear buffer
+					for(clearcount=0;clearcount<MAXUPC;clearcount++){// clear buffer
 						upcbuffer[clearcount]=0;
 					}
 					upccount=0;
@@ -147,16 +132,19 @@ Void UiTask(UArg a0, UArg a1)
 				break;//End of INIT State
 				/*-----------------------------------------------------------*/
 				case GETUPC:
-					key=KeyPend(10);
-					if(key>0&&key<0x7E){
+					key=KeyPend(WAIT10);
+					if(key>0x00 && key<'~'){
 						upcbuffer[upccount]=key;
 						upccount++;
 						draw_text_bmp(upcbuffer,16,PAGE6,MyFont,1);
 					}
 					key=0;
+					//Continues to look for UPC if there was a valid all number entry
 					if(upccount>10){
 						upccount=0;
-						for(inputcount=0;(upcbuffer[inputcount]<='9'&&upcbuffer[inputcount]>='0')&&inputcount<11;inputcount++);
+						// Will exit loop if input is not a number or when all the characters have been read
+						for(inputcount=0;(upcbuffer[inputcount]<='9'&&upcbuffer[inputcount]>='0')&&inputcount<MAXUPC;inputcount++);
+						//If
 						if(inputcount>10){
 							//valid input
 							StateInfo.StateStatus=FIND;
@@ -175,8 +163,8 @@ Void UiTask(UArg a0, UArg a1)
 				case FIND://Looks for a UPC match
 					for(lookupcount=0;(lookupcount<25&&itemfound!=1);lookupcount++){
 						if(ItemLookUp[lookupcount][0]>0){
-							for(upc_count=0;upcbuffer[upc_count]==ItemBlock1[lookupcount].UPC[upc_count]&&upc_count<11;upc_count++);
-							if(upc_count<11){
+							for(upc_count=0;upcbuffer[upc_count]==ItemBlock1[lookupcount].UPC[upc_count]&&upc_count<MAXUPC;upc_count++);
+							if(upc_count<MAXUPC){
 								//No match
 								//Give user option to either re enter or add to inventory
 								StateInfo.StateStatus = NOMATCH;
@@ -211,13 +199,13 @@ Void UiTask(UArg a0, UArg a1)
 						StateInfo.WaitforKey=TRUE;
 					}
 					else{
-						key=KeyPend(10);
-						if(key='Y'){
+						key=KeyPend(WAIT10);
+						if(key=='Y'){
 							//find a unused structure
 							//add info
 
 						}
-						else if(key='N'){
+						else if(key=='N'){
 							StateInfo.StateStatus = INIT;
 						}
 					}
@@ -244,7 +232,7 @@ Void UiTask(UArg a0, UArg a1)
 				break;//End of INIT State
 				/*-----------------------------------------------------------*/
 				case GETUPC:
-					key=KeyPend(10);
+					key=KeyPend(WAIT10);
 					if(key>0&&key<0x7E){
 						upcbuffer[upccount]=key;
 						upccount++;
@@ -253,7 +241,9 @@ Void UiTask(UArg a0, UArg a1)
 					key=0;
 					if(upccount>10){
 						upccount=0;
+						// Will exit loop if input is not a number or when all the characters have been read
 						for(inputcount=0;(upcbuffer[inputcount]<='9'&&upcbuffer[inputcount]>='0')&&inputcount<11;inputcount++);
+						//Continues to look for UPC if there was a valid all number entry
 						if(inputcount>10){
 							//valid input
 							StateInfo.StateStatus=FIND;

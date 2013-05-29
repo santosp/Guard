@@ -7,7 +7,11 @@
 #include "Graphics_Bmp.h"
 
 INT8U time_string[10];
-
+/*======================================================================*/
+/*  Type: Function - Public
+	Name: Draw_Text_bmp
+	 - Draws a string to the lcd buffer
+*/
 bounding_box_t draw_text_bmp(INT8U *string, unsigned char x, unsigned char y, const unsigned char *font, unsigned char spacing) {
 	bounding_box_t ret;
 	bounding_box_t tmp;
@@ -37,7 +41,12 @@ bounding_box_t draw_text_bmp(INT8U *string, unsigned char x, unsigned char y, co
 
 	return ret;
 }
-
+/*======================================================================*/
+/*  Type: Function - Public
+	Name: draw_char_bmp
+	 - Called from the draw text, it looks up the correct data to draw the
+	 requested character from the front
+*/
 bounding_box_t draw_char_bmp(unsigned char c, unsigned char x, unsigned char y,const unsigned char *font) {
 	unsigned int pos=0;
 	unsigned char width;

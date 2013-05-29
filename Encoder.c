@@ -7,26 +7,26 @@
 
 #include "Encoder.h"
 
-INT8U Scroll_Cnt=0;
-//INT8U Scroll_Cnt_String[4];
-long int val=0;
+INT8U	ScrollCnt=0;
+INT16U	Val=0;
+
 void
 EncoderIntHandler(void){
 	GPIOPinIntClear(ENCODER_GPIO_BASE,ENCODA);
 	//System_printf("Encoder!\n");
 	//System_flush();
-	val=GPIO_PORTA_DATA_R & ENCODB;
-	if(val==0){
-		if(Scroll_Cnt<15){
-			Scroll_Cnt++;
-			//System_printf("Count = %d \n",Scroll_Cnt);
+	Val=GPIO_PORTA_DATA_R & ENCODB;
+	if(Val==0){
+		if(ScrollCnt<MAXSCROLL){
+			ScrollCnt++;
+			//System_printf("Count = %d \n",ScrollCnt);
 			//System_flush();
 		}else{}
 	}
 	else{
-		if(Scroll_Cnt>0){
-					Scroll_Cnt--;
-					//System_printf("Count = %d \n",Scroll_Cnt);
+		if(ScrollCnt>0){
+					ScrollCnt--;
+					//System_printf("Count = %d \n",ScrollCnt);
 					//System_flush();
 				}else{}
 	}

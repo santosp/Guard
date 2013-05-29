@@ -15,25 +15,22 @@
 // st7565-config.h
 unsigned char glcd_buffer[SCREEN_WIDTH * SCREEN_HEIGHT / 8];
 unsigned char glcd_flipped = 1;
+/* Look up Table to correct incorrectly labeled pages*/
 int pagemap[] = { 4, 5, 6, 7, 0, 1, 2, 3 };
 #ifdef ST7565_DIRTY_PAGES
 unsigned char glcd_dirty_pages;
 #endif
-
+/*======================================================================*/
+/*  Type: Function - Public
+	Name: glcd_pixel
+	 - Initialization function that sets up the clock module
+*/
 void glcd_pixel(unsigned char x, unsigned char y, unsigned char colour) {
 
     if (x > SCREEN_WIDTH || y > SCREEN_HEIGHT) return;
-
     // Real screen coordinates are 0-63, not 1-64.
-    x -= 0;
-   //if(y>32){
-    	y-=1;//y-=32;
-    //}
-//    else{
-//    	y += 31;
-//    }
-
-
+	x -= 0;
+	y-=1;
     unsigned short array_pos = x + ((y / 8) * 128);
 
 #ifdef ST7565_DIRTY_PAGES
@@ -47,7 +44,11 @@ void glcd_pixel(unsigned char x, unsigned char y, unsigned char colour) {
         glcd_buffer[array_pos] &= 0xFF ^ (1 << (y % 8));
     }
 }
-
+/*======================================================================*/
+/*  Type: Function - Public
+	Name: glcd_blank
+	 - Clears the buffer and the LCD
+*/
 void glcd_blank() {
 	int n,y,x;
     // Reset the internal buffer
@@ -70,7 +71,39 @@ void glcd_blank() {
         }
     }
 }
+/*======================================================================*/
+/*  Type: Function - Public
+	Name: glcd_blank_page
+	 - Clears the buffer and the LCD of a certain page
+*/
+void glcd_blank_page(char page) {
+	int n,y,x;
+    // Reset the internal buffer
+    for ( n=(page*128-127); n <= (page*128) - 1; n++) {
+        glcd_buffer[n] = 0;
+    }
 
+    // Clear the actual screen
+    //for (y = 0; y < 8; y++) {
+        glcd_command(GLCD_CMD_SET_PAGE | pagemap[page]);
+
+        // Reset column to 0 (the left side)
+        glcd_command(GLCD_CMD_COLUMN_LOWER);
+        glcd_command(GLCD_CMD_COLUMN_UPPER);
+
+        // We iterate to 132 as the internal buffer is 65*132, not
+        // 64*124.
+        for (x = 0; x < 132; x++) {
+            glcd_data(0x00);
+        }
+    //}
+}
+/*======================================================================*/
+/*  Type: Function - Public
+	Name: glcd_refresh
+	 - Function that actually writes data to the LCD, while others just write
+	 to the buffer
+*/
 void glcd_refresh() {
     int y,x;
 
@@ -112,7 +145,11 @@ void glcd_refresh() {
     glcd_dirty_pages = 0;
 #endif
 }
-
+	/*======================================================================*/
+	/*  Type: Function - Public
+		Name: glcd_init
+		 - Initialization function that sets up the LCD module
+	*/
 void glcd_init() {
     //Enable Ports for use
 	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
@@ -194,30 +231,18 @@ void glcd_init() {
     // Unselect the chip
     BIT_SET(((GLCD_CS1)),GLCD_CS1P);// GLCD_CS1 = 1;
 }
-
+/*======================================================================*/
+/*  Type: Function - Public
+	Name: glcd_data
+	 - Function that sends commands to the LCD
+*/
 void glcd_data(unsigned char data) {
-	//int n;
+
     // A0 is high for display data
 	BIT_SET(((GLCD_A0)),GLCD_A0P);//GLCD_A0 = 1;
 
     // Select the chip
     BIT_CLR(((GLCD_CS1)),GLCD_CS1P);//GLCD_CS1 = 0;
-#if 0
-    for ( n = 0; n < 8; n++) {
-
-        if (data & 0x80) {
-        	BIT_SET(((GLCD_SDA)),GLCD_SDAP);//GLCD_SDA = 1;
-        } else {
-        	BIT_CLR(((GLCD_SDA)),GLCD_SDAP);//GLCD_SDA = 0;
-        }
-
-        // Pulse SCL
-        BIT_SET(((GLCD_SCL)),GLCD_SCLP);//GLCD_SCL = 1;
-        BIT_CLR(((GLCD_SCL)),GLCD_SCLP);//GLCD_SCL = 0;
-
-        data <<= 1;
-    }
-#endif
 
     SSIDataPut(SSI0_BASE, data);
     //
@@ -231,31 +256,19 @@ void glcd_data(unsigned char data) {
     BIT_SET(((GLCD_CS1)),GLCD_CS1P);//GLCD_CS1 = 1;
 
 }
-
+/*======================================================================*/
+/*  Type: Function - Public
+	Name: glcd_command
+	 - Function that sends commands to the LCD
+*/
 void glcd_command(char command) {
-	//int n;
+
     // A0 is low for command data
 	BIT_CLR(((GLCD_A0)),GLCD_A0P);//GLCD_A0 = 0;
 
     // Select the chip
     BIT_CLR(((GLCD_CS1)),GLCD_CS1P);//GLCD_CS1 = 0;
-#if 0
-    for ( n = 0; n < 8; n++) {
 
-        if (command & 0x80) {
-        	BIT_SET(((GLCD_SDA)),GLCD_SDAP);//GLCD_SDA = 1;
-        } else {
-        	BIT_CLR(((GLCD_SDA)),GLCD_SDAP);//GLCD_SDA = 0;
-        }
-
-        // Pulse SCL
-        BIT_SET(((GLCD_SCL)),GLCD_SCLP);//GLCD_SCL = 1;
-        BIT_CLR(((GLCD_SCL)),GLCD_SCLP);//GLCD_SCL = 0;
-
-        command <<= 1;
-    }
-
-#endif
     SSIDataPut(SSI0_BASE, command);
     //
     // Wait until SSI is done transferring all the data in the transmit FIFO
@@ -267,7 +280,11 @@ void glcd_command(char command) {
     // Unselect the chip
     BIT_SET(((GLCD_CS1)),GLCD_CS1P);//GLCD_CS1 = 1;
 }
-
+/*======================================================================*/
+/*  Type: Function - Public
+	Name: glcd_flip_screen
+	 - Allows the user to orient the screen accordingly
+*/
 void glcd_flip_screen(unsigned char flip) {
     if (flip) {
         glcd_command(GLCD_CMD_HORIZONTAL_NORMAL);
@@ -279,7 +296,11 @@ void glcd_flip_screen(unsigned char flip) {
         glcd_flipped = 1;
     }
 }
-
+/*======================================================================*/
+/*  Type: Function - Public
+	Name: glcd_inverse_screen
+	 - Allows the user to flip the screen on the fly
+*/
 void glcd_inverse_screen(unsigned char inverse) {
     if (inverse) {
         glcd_command(GLCD_CMD_DISPLAY_REVERSE);
@@ -288,23 +309,11 @@ void glcd_inverse_screen(unsigned char inverse) {
     }
 }
 
-void glcd_test_card() {
-    unsigned char p = 0xF0;
-    int n;
-
-    for ( n = 1; n <= (SCREEN_WIDTH * SCREEN_HEIGHT / 8); n++) {
-        glcd_buffer[n - 1] = p;
-
-        if (n % 4 == 0) {
-            unsigned char q = p;
-            p = p << 4;
-            p |= q >> 4;
-        }
-    }
-
-    glcd_refresh();
-}
-
+/*======================================================================*/
+/*  Type: Function - Public
+	Name: glcd_contrast
+	 - Enables the user to set the contrast of the LCD backlight
+*/
 void glcd_contrast(char resistor_ratio, char contrast) {
     if (resistor_ratio > 7 || contrast > 63) return;
 

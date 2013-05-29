@@ -6,10 +6,13 @@
  */
 //Includes
 #include "Clock.h"
+
+/* Sys/Bios specific headers */
 #include <xdc/runtime/System.h>
 #include <xdc/runtime/Error.h>
 #include <ti/sysbios/gates/GateMutexPri.h>
 
+/* Private Global to module that contains master time of day */
 static TIME Time={2,00,00};
 //static INT8U temp_time_string[10];
 //GateMutexPri_Handle timemutex;
@@ -17,7 +20,12 @@ static TIME Time={2,00,00};
 //IArg gatekey;
 
 
-//Function ClockInit();
+/*======================================================================*/
+/*  Type: Function - Public
+	Name: ClockInit
+	 - Initialization function that sets up the clock module
+*/
+
 void ClockInit(void){
 
     //  Set the clocking to run directly from the crystal.
@@ -45,15 +53,12 @@ void ClockInit(void){
     //Error_init(&eb);
 }
 
-//*****************************************************************************
-//
-// Called by the NVIC as a result of SysTick Timer rollover interrupt flag
-//
-// Checks buttons and calls AppButtonHandler to manage button events.
-// Tracks time and auto mode color stepping.  Calls AppRainbow to implement
-// RGB color changes.
-//
-//*****************************************************************************
+/*======================================================================*/
+/*  Type: Interrupt Handler - Private
+	Name: Timer0IntHandler
+	 - Interrupt that happens every 1 second from timer, increments time
+	 then exits
+*/
 void
 Timer0IntHandler(void)
 {
@@ -77,6 +82,11 @@ Timer0IntHandler(void)
    // GateMutexPri_leave(timemutex,gatekey);
 
 }
+/*======================================================================*/
+/*  Type: Function - Public
+	Name: TimeGet
+	 - Pulls Time from master time of day
+*/
 
 void TimeGet(TIME *ltime){
 	//mutexpend
@@ -85,6 +95,11 @@ void TimeGet(TIME *ltime){
 	//GateMutexPri_leave(timemutex,gatekey);
 
 }
+/*======================================================================*/
+/*  Type: Function - Public
+	Name:TimeSet
+	 - Sets the user designated time to master time of day
+*/
 
 void TimeSet(TIME *ltime){
 	//gatekey = GateMutexPri_enter(timemutex);

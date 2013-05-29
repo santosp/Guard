@@ -41,7 +41,7 @@
 
 #define ALL_LINES             (ENCODA | ENCODB)
 
-
+#define MAXSCROLL				15
 
 extern void EncoderInit(void);
 

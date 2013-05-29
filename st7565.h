@@ -153,6 +153,13 @@ void glcd_refresh();
  */
 void glcd_blank();
 /**
+ * Clear the screen, without affecting the buffer in RAM.
+ *
+ * Useful at startup as the memory inside the screen may
+ * contain "random" data.
+ */
+extern void glcd_blank_page();
+/**
  * Set a single pixel 
  * 
  * @param x 		The x position, from 1 - SCREEN_WIDTH
@@ -180,17 +187,7 @@ void glcd_inverse_screen(unsigned char inverse);
  * Useful for ensuring that the screen is receiving data correctly or for 
  * adjusting contrast.
  */
-void glcd_test_card();
-/**
- * Set the contrast of the screen.  This involves two steps, setting the 
- * internal resistor ratio (R1:R2) and then the contrast.
- *
- * Tip: Find a resistor ratio that works well with the screen and stick to it
- *      throughout.  Then adjust the contrast dynamically between 0 and 63.
- *
- * @param resistor_ratio	Ratio of the internal resistors, from 0-7
- * @param contrast			Contrast, from 0-63
- */
+
 void glcd_contrast(char resistor_ratio, char contrast);
 
 /** Global variable that tracks whether the screen is the "normal" way up. */

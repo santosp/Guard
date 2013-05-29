@@ -44,7 +44,7 @@
 #include "st7565.h"
 #include "Clock.h"
 #include "Ps2Keyboard.h"
-
+/*  Include the State info so buttons can change the states */
 extern UISTATEINFO StateInfo;
 TIME TimeOfDay={0,0,0};
 //*****************************************************************************
@@ -93,13 +93,7 @@ static unsigned char g_ucButtonStates = ALL_BUTTONS;
 //! indicates that it is released.
 //
 //*****************************************************************************
-void ButtonISR(void){
-	GPIOPinIntClear(BUTTONS_GPIO_BASE,ALL_BUTTONS);
 
-	//System_printf("Buttons!!!!!!!!\n\n");
-	//System_flush();
-
-}
 
 unsigned char
 ButtonsPoll(unsigned char *pucDelta, unsigned char *pucRawState)
@@ -203,9 +197,9 @@ ButtonsInit(void)
     ROM_GPIOPadConfigSet(BUTTONS_GPIO_BASE, ALL_BUTTONS,
                          GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
 
-	GPIOIntTypeSet(BUTTONS_GPIO_BASE,ALL_BUTTONS,GPIO_FALLING_EDGE);
+	//GPIOIntTypeSet(BUTTONS_GPIO_BASE,ALL_BUTTONS,GPIO_FALLING_EDGE);
 	//GPIOPortIntRegister(GPIO_PORTA_BASE,ButtonISR);
-	GPIOPinIntEnable(BUTTONS_GPIO_BASE,ALL_BUTTONS);
+	//GPIOPinIntEnable(BUTTONS_GPIO_BASE,ALL_BUTTONS);
     //
     // Initialize the debounced button state with the current state read from
     // the GPIO bank.
@@ -266,13 +260,6 @@ Void ButtonTask(UArg a0, UArg a1){
 		Task_sleep(10);
 		TimeGet(&TimeOfDay);
 		GlcdDispTime(TimeOfDay.hr,TimeOfDay.min,TimeOfDay.sec);
-		//key=KeyScan();
-		//key=GetKey();
-		//key=KeyPend(10);
-		//if(key>0){
-		//	draw_char_bmp(key, 24, 24, MyFont);
-		//	key=0;
-		//}
 		glcd_refresh();
 	}
 }

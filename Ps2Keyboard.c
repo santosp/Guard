@@ -2,69 +2,71 @@
  * Ps2Keyboard.c
  *
  *  Created on: Mar 27, 2013
- *      Author: AGV-EET
+ *      Author: Paul Santos
  */
 #include "Ps2Keyboard.h"
-#define NUM_SSI_DATA 11
 
-#define K_STARTBIT    1
-#define K_PARITYBIT  10
-#define K_STOPBIT    11
-INT8U temp_count=0;
-INT8U temp_count_string[4];
-unsigned long ulDataRx[NUM_SSI_DATA];
-unsigned long Data=0;
 
+//INT8U temp_count=0;
+//INT8U temp_count_string[4];
+
+/* Private Function Prototypes */
+static INT8U GetKey(void);
+static void PutKeyBuf(INT8U c);
+static void Decode(INT8U sc);
+
+/* Include Semaphore to module */
 extern Semaphore_Handle KeySem;
-extern Semaphore_Handle DataSem;
-INT8U	KeyBuf[KBUFFSIZE];	//PS2 Keyboard buffer, the register to store characters key in
-INT8U	KeyIn;				//Index into PS/2 key buf where next scan code will be inserted
-INT8U	KeyOut;				//Index into PS/2 key buf where next scan code will be removed
-INT8U	KeyRead;			//Number of keys read from the PS/2 keyboard
-INT8U 	KeyBuffer=0;
-INT8U	clkstat,datstat;
-INT8U paritystat;
-INT8U data;
-INT8U bitcount=0;
+//extern Semaphore_Handle DataSem;//For use with SPI
+
+/* Global variables*/
+static INT8U	KeyBuf[KBUFFSIZE];	//PS2 Keyboard buffer, the register to store characters key in
+static INT8U	KeyIn;				//Index into PS/2 key buf where next scan code will be inserted
+static INT8U	KeyOut;				//Index into PS/2 key buf where next scan code will be removed
+static INT8U	KeyRead;			//Number of keys read from the PS/2 keyboard
+static INT8U 	KeyBuffer=0;
+
+/*Globals Needed for interrupt handler*/
+static INT8U	Clkstat,Datstat;	//State of the clock and Data lines
+static INT8U 	Paritystat;			//Statis of Parity bit
+static INT8U 	Datain;				//Incoming bit status
+static INT8U 	BitCount=0;			//Index to keep track of bits in a message
+
 /*======================================================================*/
+/*  Type: Function - Public
+	Name: ClockInit
+	 - Initialization function that sets up the clock module
+*/
 void
 FSSIntHandler(void){
 
 	GPIOPinIntClear(GPIO_PORTB_BASE,GPIO_PIN_4);
-	  clkstat = GPIOPinRead(GPIO_PORTB_BASE,GPIO_PIN_4);//check CLK pin state;
-	  datstat =GPIOPinRead(GPIO_PORTB_BASE,GPIO_PIN_6);//check DAT pin state;
-
-	  bitcount++;
-
-	  if (bitcount==K_STARTBIT)
-	    {
-	      if (datstat || clkstat)	bitcount=0;
-	      data=0;
-	      paritystat=0;
-
-	    }
-	  else if (bitcount==K_PARITYBIT)
-	    {
-	      paritystat = datstat;
-	    }
-	  else if (bitcount==K_STOPBIT)
-	    {
-	      Decode(data);
-	      bitcount=0;
-	    }
-	  else
-	    {
-	      // For all bits from 2, 3...9 (total 8-bit)
-	      data= data >> 1;
-	      if (datstat)
-	        data = data | 0x80;
-	    }
+	Clkstat = GPIOPinRead(GPIO_PORTB_BASE,GPIO_PIN_4);//check CLK pin state;
+	Datstat = GPIOPinRead(GPIO_PORTB_BASE,GPIO_PIN_6);//check DAT pin state;
+	BitCount++;
+	if (BitCount==K_STARTBIT){
+		if (Datstat || Clkstat)	BitCount=0;
+		Datain=0;
+		Paritystat=0;
+	}
+	else if (BitCount==K_PARITYBIT){
+		Paritystat = Datstat;
+	}
+	else if (BitCount==K_STOPBIT){
+		Decode(Datain);
+		BitCount=0;
+	}
+	else{
+	  // For all bits from 2, 3...9 (total 8-bit)
+		Datain= Datain >> 1;
+	  if (Datstat)Datain = Datain | 0x80;
+	}
 
 #if 0
 	//GPIOPinIntDisable(GPIO_PORTB_BASE,GPIO_PIN_4);
 	SSIIntClear(SSI2_BASE,SSI_RXFF);
 
-#if 1
+
 	//BIT_CLR(GPIO_PORTB_BASE,GPIO_PIN_3);
 	while(SSI2_DR_R&01!=1){}//Wait till data
 	//Semaphore_post(DataSem);
@@ -78,17 +80,23 @@ FSSIntHandler(void){
 	Decode((INT8U)Data);
 	Data=0;
 	}else{/*Do nothing*/};
-#endif
+
 #endif
 	GPIOPinIntEnable(GPIO_PORTB_BASE,GPIO_PIN_4);
 }
+
 /*======================================================================*/
+/*  Type: Function - Public
+	Name: KeyboardInit
+	 - Initialization function that sets up the Keyboard module
+*/
+
 void KeyboardInit(void){
+
 #if 1
+
 	//SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
-
 	GPIOPinTypeGPIOInput(GPIO_PORTB_BASE,GPIO_PIN_4|GPIO_PIN_6);
-
 	GPIOIntTypeSet(GPIO_PORTB_BASE,GPIO_PIN_4,GPIO_RISING_EDGE);
 	//GPIOPortIntRegister(GPIO_PORTA_BASE,KeyboardIntHandler);
 
@@ -115,142 +123,135 @@ void KeyboardInit(void){
 	SSIEnable(SSI2_BASE);
 #endif
 	GPIOIntTypeSet(GPIO_PORTB_BASE,GPIO_PIN_4,GPIO_FALLING_EDGE);
-
 	GPIOPinIntEnable(GPIO_PORTB_BASE,GPIO_PIN_4);
-
 }
 
 
 /*======================================================================*/
-void Decode(INT8U sc)
-{
-  static INT8U keyisup=FALSE, shift = FALSE,capslock=FALSE;//, mode = 0;
-  INT8U i=0;
-  INT8U keypress=0;
+/*  Type: Function - Private
+	Name: Decode
+	 - Decodes the PS/2 scancode to its propper ascii character
+*/
+void Decode(INT8U sc){
+	static INT8U keyisup=FALSE, shift = FALSE,capslock=FALSE;//, mode = 0;
+	INT8U i=0;
+	if (!keyisup){                   /* Last data received was the up-key identifier */
+		switch (sc){
 
-    if (!keyisup)                   /* Last data received was the up-key identifier */
-    {
-      switch (sc)
-        {
-        case BREAKCHAR :        /*  The up-key identifier */
+		case BREAKCHAR :        /*  The up-key identifier */
 			keyisup = TRUE;
 			break;
 
-        case NONUMCODE :	/* No valid key yet*/
+		case NONUMCODE :	/* No valid key yet*/
 			//keyisup = TRUE;
 			break;
 
-        case LEFTSHIFT :
+		case LEFTSHIFT :
 			shift = TRUE;
 			break;
 
-        case RIGHTSHIFT:
+		case RIGHTSHIFT:
 			shift = TRUE;
 			break;
 
-        case 0x58: //caps lock
+		case 0x58: //caps lock
 			capslock=!capslock;
 			break;
-        default:
+
+		default:
 			if (!shift && !capslock){//lowercase & #s
 				// do a table look-up
 				for (i = 0; unshifted[i][0]!=sc && unshifted[i][0]; i++);
-				if (unshifted[i][0] == sc)
-				{
+				if (unshifted[i][0] == sc){
+
 					PutKeyBuf((unshifted[i][1]));
-					//keypress = unshifted[i][1];
 				}
 			}
 			else if (shift && !capslock){//uppercase & symbols
-			    /* look-up */
+				/* look-up */
 				for (i = 0; shifted[i][0]!=sc && shifted[i][0]; i++);
-				if (shifted[i][0] == sc)
-				{
+				if (shifted[i][0] == sc){
 					PutKeyBuf((shifted[i][1]));
-					//keypress = shifted[i][1];
 					shift=0;
 				}
 			}
 			else if (!shift && capslock){//uppercase & #s
 				for (i = 0; shifted[i][0]!=sc && shifted[i][0]; i++);
-                if((shifted[i][0] == sc) &&(i<=28&&i>=53)){
-                    PutKeyBuf((shifted[i][1]));
-                	//keypress = shifted[i][1];
-                    shift=0;
-                }
-                else{
-                    PutKeyBuf((unshifted[i][1]));
-                	//keypress = unshifted[i][1];
-                    shift=0;
-                }
+				if((shifted[i][0] == sc) &&(i<=28&&i>=53)){
+					PutKeyBuf((shifted[i][1]));
+					shift=0;
+				}
+				else{
+					PutKeyBuf((unshifted[i][1]));
+					shift=0;
+				}
 			}
 			else{//lowercase & symbols
-                for (i = 0; shifted[i][0]!=sc && shifted[i][0]; i++);
-                if((shifted[i][0] == sc) &&(i<=28&&i>=53)){
-                    PutKeyBuf((unshifted[i][1]));
-                	//keypress = unshifted[i][1];
-                    shift=0;
-                }
-                else{
-                    PutKeyBuf((shifted[i][1]));
-                	//keypress = shifted[i][1];
-                    shift=0;
-                }
+				for (i = 0; shifted[i][0]!=sc && shifted[i][0]; i++);
+				if((shifted[i][0] == sc) &&(i<=28&&i>=53)){
+					PutKeyBuf((unshifted[i][1]));
+					shift=0;
+				}
+				else{
+					PutKeyBuf((shifted[i][1]));
+					shift=0;
+				}
 			}
 			break;
-         }// End of Switch
-    }// End of IF
-    else
-    {
+		}// End of Switch
+	}// End of IF
+	else
+	{
 		keyisup = FALSE;
-		switch (sc)
-        {
+		switch (sc){
 			case LEFTSHIFT :
+				shift = FALSE;
 				break;
 			case RIGHTSHIFT:
-			shift = FALSE;
-			break;
-        }
-    }
-    //return keypress;
+				shift = FALSE;
+				break;
+		}
+	}
 }//End Of Decode
 /*======================================================================*/
 /*  Type: Function - Private
 	Name: PutKeyBuf
 	 - Puts valid key into buffer
 */
-void PutKeyBuf (INT8U key)
-{
-	if (KeyRead < KBUFFSIZE)  		//make sure that we don't overflow the buffer
-    {
-      KeyRead++;							//Increment the number of keys read
-      KeyBuf[KeyIn++] = key;		//Store the scan code into the buffer
-      if (KeyIn >= KBUFFSIZE)  	//Adjust index to the next scan code to put in buffer
-        {
-          KeyIn = 0;
-        }else{}
-    }else{}
+void PutKeyBuf (INT8U key){
+	if (KeyRead < KBUFFSIZE){  		//make sure that we don't overflow the buffer
+		KeyRead++;							//Increment the number of keys read
+		KeyBuf[KeyIn++] = key;		//Store the scan code into the buffer
+		if (KeyIn >= KBUFFSIZE){  	//Adjust index to the next scan code to put in buffer
+			KeyIn = 0;
+		}else{/*Do nothing*/}
+	}else{/*Do nothing*/}
 }
-
-INT8U GetKey(void)// public function, can be called from main polling loop
-{
+/*======================================================================*/
+/*  Type: Function - Private
+	Name: GetKey
+	 - Puts valid key into buffer
+*/
+INT8U GetKey(void){// public function, can be called from main polling loop
 	INT8U key=0;
-  if (KeyRead > 0)
-    {
-      KeyRead--;			/* Decrement the number of keys in the buffer */
-      key = KeyBuf[KeyOut];	/* Get scan code from the buffer */
-      KeyOut++;
-      if (KeyOut >= KBUFFSIZE)
-        {
-          KeyOut = 0;
-        }
-
-    } else {
-        return (0x00);					/* No scan codes in buffer, return -1 */
-    }
-  return (key);						/* return the scan code of the key pressed */
+	if (KeyRead > 0){
+		KeyRead--;			/* Decrement the number of keys in the buffer */
+		key = KeyBuf[KeyOut];	/* Get scan code from the buffer */
+		KeyOut++;
+		if (KeyOut >= KBUFFSIZE){
+			KeyOut = 0;
+		}
+	}else{
+		return (0x00);					/* No scan codes in buffer, return -1 */
+	}
+	return (key);						/* return the scan code of the key pressed */
 }
-
+/*======================================================================*/
+/*  Type: Function - Public
+	Name: KeyPend
+	 - Public function that uses a private semaphore to wait for a keypress
+	 or a timeout, if there is a timeout, it returns a zero.
+*/
 INT8U KeyPend(INT16U tout){
 	Bool timeout;
 	INT8U key=0;
@@ -264,8 +265,11 @@ INT8U KeyPend(INT16U tout){
 		return key;
 	}
 }
-
-#if 1
+/*======================================================================*/
+/*  Type: Task - Private
+	Name: KeyTask
+	 - Pulls Valid Key, checks to see if it greater then 0, then posts a semaphore
+*/
 Void KeyTask(UArg a0, UArg a1){
 	INT8U key;
 	while(1){
@@ -274,39 +278,8 @@ Void KeyTask(UArg a0, UArg a1){
 		if(key>0){
 			KeyBuffer = key;
 			Semaphore_post(KeySem);
+			key=0;
 		}
 	}
 
-}
-#endif
-INT8U Byte_Reverse(INT16U org){
-	INT8U temp=0,x=0,temp_org=0;
-	temp_org=org;
-	for(x=0;x<8;x++){
-		temp+= temp_org&0x01;
-		if(x!=7){
-			temp<<=1;
-			temp_org>>=1;
-		}else{}
-	}
-	return temp;
-}
-INT8U KeyScan(void){
-	INT16U Data=0;
-	Semaphore_pend(DataSem,0);
-	//if(SSI2_RIS_R&0x04){
-		//Data = SSI2_DR_R&0x07FF;
-		//Data = SSIDataGetNonBlocking(SSI2_BASE,(INT32U *)SSI2_DR_R);
-		//SSI2_DR_R = 0x0000 & 0x07FF;
-		//Data&=0x03FC;
-		//Data>>=2;
-		//Data=Byte_Reverse((INT8U)Data);
-	//}
-	if(Data==0||Data>0x7E){
-		//Data = Decode((INT8U)Data);
-		Data=0;
-	}else{
-		//Data = Decode((INT8U)Data);
-	}
-	return Data;
 }

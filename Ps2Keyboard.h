@@ -50,18 +50,15 @@
 #define CAPSLED 0x04
 #define NUMLED  0x01
 
-
+#define NUM_SSI_DATA 11
+#define K_STARTBIT    1
+#define K_PARITYBIT  10
+#define K_STOPBIT    11
 
 
 typedef enum{PS2START,PS2DATA,PS2PARITY,PS2STOP}PS2STATE;
+
 extern void KeyboardInit(void);
-
-
-extern void Decode(INT8U sc);
-void PutKeyBuf(INT8U c);
-extern INT8U GetKey(void);
-INT8U Byte_Reverse(INT16U org);
-INT8U KeyScan(void);
-INT8U KeyPend(INT16U tout);
+extern INT8U KeyPend(INT16U tout);
 
 #endif /* PS2KEYBOARD_H_ */
