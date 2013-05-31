@@ -13,5 +13,5 @@
 
 
 extern void WelcomeMsg(void);
-
+extern void MainMsg(void);
 #endif /* UIMESSAGES_H_ */

@@ -28,7 +28,7 @@
 #include "Items.h"
 /*=======*/
 //Globals
-UISTATEINFO StateInfo={REMOVE,INIT,FALSE}; // NEED TO START IN WELCOME not Remove
+UISTATEINFO StateInfo={WELCOME,INIT,FALSE}; // NEED TO START IN WELCOME not Remove
 UISTATE LastState=MAIN;
 
 
@@ -43,41 +43,64 @@ extern ITEMINFO ItemBlock1[25];
 Void UiTask(UArg a0, UArg a1)
 {
 	INT8U key=0;
+	INT8U timedatebuffer[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 	INT8U upcbuffer[12]={0,0,0,0,0,0,0,0,0,0,0,0};
 	INT8U upccount=0,inputcount=0,itemfound=0,lookupcount=0,upc_count=0;
 	INT8U clearcount=0;
+	INT8U symbolcount=0;
 	while(1){
 		switch(StateInfo.UserState){
 			case WELCOME:
 				switch (StateInfo.StateStatus){
 				case INIT:
 					WelcomeMsg();
-					//Initialize state
-					//draw_text_bmp((INT8U *)"Welcome ",16,40,MyFont,1);
-					//draw_text_bmp((INT8U *)"Welcome To The Grocery Guard System",16,16,MyFont,1);
-					//draw_text_bmp((INT8U *)"Please Enter The Current Date in HH:MMPM/AM,MM/DD/YYYY Format",16,24,MyFont,1);
-					//draw_text_bmp((INT8U *)"Ex) 2:30PM , May 5th 2013",16,32,MyFont,1);
-					//draw_text_bmp((INT8U *)"02:30PM , 05/05/2013 ",16,40,MyFont,1);
-
+					StateInfo.StateStatus = GETUPC;
 				break;//End of INIT State
 				/*-----------------------------------------------------------*/
 				case GETUPC:
+					key=KeyPend(WAIT10);
+					if(upccount<6){
+						if(key>='0' && key<='9'){
+							timedatebuffer[upccount]=key;
+							upccount++;
+							if(upccount==2){
+								//input a : and add to symbol count
+								timedatebuffer[upccount]=':';
+								upccount++;
+							}
+							else if(upccount==5){
+								//input a , and add to symbol count
+								timedatebuffer[upccount]=',';
+								upccount++;
+							}else{/*Do nothing*/}
+							//draw_text_bmp(upcbuffer,16,PAGE6,MyFont,1);
+						}else{/*Do nothing*/}
+					}
+					else if(upccount>=6&&upccount<=13){
+						if(key>='0' && key<='9'){
+							timedatebuffer[upccount]=key;
+							upccount++;
+							if(upccount==8||upccount==11){
+								//input a : and add to symbol count
+								timedatebuffer[upccount]='/';
+								upccount++;
+							}else{/*Do nothing*/}
+							//draw_text_bmp(upcbuffer,16,PAGE6,MyFont,1);
+						}else{/*Do nothing*/}
+					}else if(upccount==14){
+						StateInfo.StateStatus = INIT;
+						StateInfo.UserState = MAIN;
+					}else{/*Do nothing*/}
+					draw_text_bmp(timedatebuffer,16,PAGE6,MyFont,1);
+					key=0;
 				break;//End of GETUPC State
-				/*-----------------------------------------------------------*/
+
 				case INVALID:
-					////invalid user input, i.e. non number characters,
-				break;//End of INVALID state
-				/*-----------------------------------------------------------*/
 				case FIND:
-				break;//End of FIND State
-				/*-----------------------------------------------------------*/
 				case FOUND:
-				break;//End of FOUND State
-				/*-----------------------------------------------------------*/
 				case NOMATCH:
-				break;//End of NOMATCH State
-				/*-----------------------------------------------------------*/
 				default:
+					/* Do Nothing*/
 				break;//End of Default
 				}//End of StateStatus WELCOME switch
 
@@ -86,31 +109,20 @@ Void UiTask(UArg a0, UArg a1)
 			case MAIN:
 				switch (StateInfo.StateStatus){
 				case INIT:
-					//Initialize state
-					//draw_text_bmp((INT8U *)"Welcome To The Grocery Guard System",16,16,MyFont,1);
-					//draw_text_bmp((INT8U *)"Please Enter The Current Date in HH:MMPM/AM,MM/DD/YYYY Format",16,24,MyFont,1);
-					//draw_text_bmp((INT8U *)"Ex) 2:30PM , May 5th 2013",16,32,MyFont,1);
-					//draw_text_bmp((INT8U *)"02:30PM , 05/05/2013 ",16,40,MyFont,1);
-					draw_text_bmp((INT8U *)"MAIN STATE ",16,PAGE5,MyFont,1);
+					MainMsg();
+					StateInfo.StateStatus = GETUPC;
 				break;//End of INIT State
 				/*-----------------------------------------------------------*/
 				case GETUPC:
+					/* Do Nothing untill button press*/
 				break;//End of GETUPC State
 				/*-----------------------------------------------------------*/
 				case INVALID:
-					////invalid user input, i.e. non number characters,
-				break;//End of INVALID state
-				/*-----------------------------------------------------------*/
 				case FIND:
-				break;//End of FIND State
-				/*-----------------------------------------------------------*/
 				case FOUND:
-				break;//End of FOUND State
-				/*-----------------------------------------------------------*/
 				case NOMATCH:
-				break;//End of NOMATCH State
-				/*-----------------------------------------------------------*/
 				default:
+					/* Do Nothing*/
 				break;//End of Default
 				}//End of StateStatus MAIN switch
 
@@ -120,15 +132,16 @@ Void UiTask(UArg a0, UArg a1)
 				switch (StateInfo.StateStatus){
 				case INIT:
 					//Initialize state
-					draw_text_bmp((INT8U *)"ADD STATE ",16,PAGE5,MyFont,1);
-					StateInfo.StateStatus = GETUPC;
-					draw_text_bmp((INT8U *)"         ",16,PAGE3,MyFont,1);// clear found or not space
-					draw_text_bmp((INT8U *)"             ",16,PAGE6,MyFont,1);//clear upcbuffer space
+					AddMsg();
+					//draw_text_bmp((INT8U *)"ADD STATE ",16,PAGE5,MyFont,1);
+					//draw_text_bmp((INT8U *)"         ",16,PAGE3,MyFont,1);// clear found or not space
+					//draw_text_bmp((INT8U *)"             ",16,PAGE6,MyFont,1);//clear upcbuffer space
 					for(clearcount=0;clearcount<MAXUPC;clearcount++){// clear buffer
 						upcbuffer[clearcount]=0;
 					}
 					upccount=0;
 					itemfound=0;
+					StateInfo.StateStatus = GETUPC;
 				break;//End of INIT State
 				/*-----------------------------------------------------------*/
 				case GETUPC:

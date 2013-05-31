@@ -17,7 +17,7 @@ typedef signed long     INT32S;
 
 typedef enum {WELCOME,MAIN,ADD,REMOVE,INV}UISTATE;
 typedef enum {INIT,GETUPC,INVALID,FIND,FOUND,NOMATCH}SUBSTATE;
-typedef enum {INIT,INVALID}WELCOMESUBSTATE;
+//typedef enum {INIT,INVALID}WELCOMESUBSTATE;
 
 typedef struct{
 	UISTATE UserState;

@@ -218,6 +218,7 @@ main.obj: C:/ti/xdctools_3_25_00_48/packages/xdc/runtime/Diags.h
 main.obj: C:/ti/bios_6_35_01_29/packages/ti/sysbios/knl/Task.h
 main.obj: C:/StellarisWare/driverlib/ssi.h
 main.obj: ../scancodes.h
+main.obj: ../UiMessages.h
 main.obj: ../Items.h
 
 ../main.c: 
@@ -438,4 +439,5 @@ C:/ti/xdctools_3_25_00_48/packages/xdc/runtime/Diags.h:
 C:/ti/bios_6_35_01_29/packages/ti/sysbios/knl/Task.h: 
 C:/StellarisWare/driverlib/ssi.h: 
 ../scancodes.h: 
+../UiMessages.h: 
 ../Items.h: 

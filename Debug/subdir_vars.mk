@@ -16,6 +16,7 @@ C_SRCS += \
 ../Graphics_Bmp.c \
 ../Items.c \
 ../Ps2Keyboard.c \
+../UiMessages.c \
 ../buttons.c \
 ../graphics.c \
 ../main.c \
@@ -29,6 +30,7 @@ OBJS += \
 ./Graphics_Bmp.obj \
 ./Items.obj \
 ./Ps2Keyboard.obj \
+./UiMessages.obj \
 ./buttons.obj \
 ./graphics.obj \
 ./main.obj \
@@ -46,6 +48,7 @@ C_DEPS += \
 ./Graphics_Bmp.pp \
 ./Items.pp \
 ./Ps2Keyboard.pp \
+./UiMessages.pp \
 ./buttons.pp \
 ./graphics.pp \
 ./main.pp \
@@ -75,6 +78,7 @@ C_DEPS__QUOTED += \
 "Graphics_Bmp.pp" \
 "Items.pp" \
 "Ps2Keyboard.pp" \
+"UiMessages.pp" \
 "buttons.pp" \
 "graphics.pp" \
 "main.pp" \
@@ -88,6 +92,7 @@ OBJS__QUOTED += \
 "Graphics_Bmp.obj" \
 "Items.obj" \
 "Ps2Keyboard.obj" \
+"UiMessages.obj" \
 "buttons.obj" \
 "graphics.obj" \
 "main.obj" \
@@ -101,6 +106,7 @@ C_SRCS__QUOTED += \
 "../Graphics_Bmp.c" \
 "../Items.c" \
 "../Ps2Keyboard.c" \
+"../UiMessages.c" \
 "../buttons.c" \
 "../graphics.c" \
 "../main.c" \

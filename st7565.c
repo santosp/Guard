@@ -66,7 +66,7 @@ void glcd_blank() {
 
         // We iterate to 132 as the internal buffer is 65*132, not
         // 64*124.
-        for (x = 0; x < 132; x++) {
+        for (x = 0; x < 128; x++) {
             glcd_data(0x00);
         }
     }
@@ -76,16 +76,43 @@ void glcd_blank() {
 	Name: glcd_blank_page
 	 - Clears the buffer and the LCD of a certain page
 */
-void glcd_blank_page(char page) {
-	int n,y,x;
+void glcd_blank_page(unsigned char page) {
+	int n,x;
     // Reset the internal buffer
-    for ( n=(page*128-127); n <= (page*128) - 1; n++) {
+    for ( n=(page*128-127); n <= (page*128); n++) {
         glcd_buffer[n] = 0;
     }
 
     // Clear the actual screen
     //for (y = 0; y < 8; y++) {
-        glcd_command(GLCD_CMD_SET_PAGE | pagemap[page]);
+        glcd_command(GLCD_CMD_SET_PAGE | pagemap[page-1]);
+
+        // Reset column to 0 (the left side)
+        glcd_command(GLCD_CMD_COLUMN_LOWER);
+        glcd_command(GLCD_CMD_COLUMN_UPPER);
+
+        // We iterate to 132 as the internal buffer is 65*132, not
+        // 64*124.
+        for (x = 0; x < 132; x++) {
+            glcd_data(0x00);
+        }
+    //}
+}
+/*======================================================================*/
+/*  Type: Function - Public
+	Name: glcd_blank_page
+	 - Clears the buffer and the LCD of a certain page
+*/
+void glcd_blank_pagexy(unsigned char page,unsigned char n, unsigned char x) {
+	//int n,x;
+    // Reset the internal buffer
+    for ( n; n <= x; n++) {
+        glcd_buffer[n] = 0;
+    }
+
+    // Clear the actual screen
+    //for (y = 0; y < 8; y++) {
+        glcd_command(GLCD_CMD_SET_PAGE | pagemap[page-1]);
 
         // Reset column to 0 (the left side)
         glcd_command(GLCD_CMD_COLUMN_LOWER);

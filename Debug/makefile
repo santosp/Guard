@@ -13,6 +13,7 @@ $(GEN_CMDS__FLAG) \
 "./main.obj" \
 "./graphics.obj" \
 "./buttons.obj" \
+"./UiMessages.obj" \
 "./Ps2Keyboard.obj" \
 "./Items.obj" \
 "./Graphics_Bmp.obj" \
@@ -134,8 +135,8 @@ Grocery.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 clean:
 	-$(RM) $(TMS470_EXECUTABLE_OUTPUTS__QUOTED)$(GEN_SRCS__QUOTED)$(GEN_MISC_FILES__QUOTED)$(GEN_OPTS__QUOTED)$(GEN_CMDS__QUOTED) "Grocery.out"
 	-$(RMDIR) $(GEN_MISC_DIRS__QUOTED)
-	-$(RM) "Clock.pp" "Encoder.pp" "Font.pp" "Graphics_Bmp.pp" "Items.pp" "Ps2Keyboard.pp" "buttons.pp" "graphics.pp" "main.pp" "scancodes.pp" "st7565.pp" 
-	-$(RM) "Clock.obj" "Encoder.obj" "Font.obj" "Graphics_Bmp.obj" "Items.obj" "Ps2Keyboard.obj" "buttons.obj" "graphics.obj" "main.obj" "scancodes.obj" "st7565.obj" 
+	-$(RM) "Clock.pp" "Encoder.pp" "Font.pp" "Graphics_Bmp.pp" "Items.pp" "Ps2Keyboard.pp" "UiMessages.pp" "buttons.pp" "graphics.pp" "main.pp" "scancodes.pp" "st7565.pp" 
+	-$(RM) "Clock.obj" "Encoder.obj" "Font.obj" "Graphics_Bmp.obj" "Items.obj" "Ps2Keyboard.obj" "UiMessages.obj" "buttons.obj" "graphics.obj" "main.obj" "scancodes.obj" "st7565.obj" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

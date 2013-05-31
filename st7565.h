@@ -158,7 +158,14 @@ void glcd_blank();
  * Useful at startup as the memory inside the screen may
  * contain "random" data.
  */
-extern void glcd_blank_page();
+extern void glcd_blank_page(unsigned char page);
+/**
+ * Clear the screen, without affecting the buffer in RAM.
+ *
+ * Useful at startup as the memory inside the screen may
+ * contain "random" data.
+ */
+extern void glcd_blank_pagexy(unsigned char page,unsigned char x,unsigned char y);
 /**
  * Set a single pixel 
  * 

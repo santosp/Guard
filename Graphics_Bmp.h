@@ -29,6 +29,24 @@
 #define PAGE6 49
 #define PAGE7 57
 
+#define TPAGE0 2
+#define TPAGE1 10
+#define TPAGE2 18
+#define TPAGE3 26
+#define TPAGE4 34
+#define TPAGE5 42
+#define TPAGE6 50
+#define TPAGE7 58
+
+#define LPAGE0 1
+#define LPAGE1 2
+#define LPAGE2 3
+#define LPAGE3 4
+#define LPAGE4 5
+#define LPAGE5 6
+#define LPAGE6 7
+#define LPAGE7 8
+
 extern bounding_box_t draw_text_bmp(INT8U *string, unsigned char x, unsigned char y, const unsigned char *font, unsigned char spacing);
 
 bounding_box_t draw_char_bmp(unsigned char c, unsigned char x, unsigned char y,const unsigned char *font) ;
