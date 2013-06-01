@@ -8,24 +8,24 @@
 //#define BIT6 0x40//64
 //#define BIT7 0x80//128
 /** The chip select pin */
-#define GLCD_CS1 GPIO_PORTE_BASE
-#define GLCD_CS1P GPIO_PIN_5
+#define GLCD_CS1 GPIO_PORTD_BASE
+#define GLCD_CS1P GPIO_PIN_1
 /** The reset pin (this is required and should not be tied high) */
 #define GLCD_RESET GPIO_PORTE_BASE
 #define GLCD_RESETP GPIO_PIN_4
 /** The A0 pin, which selects command or data mode */
-#define GLCD_A0 GPIO_PORTB_BASE
-#define GLCD_A0P GPIO_PIN_1
+#define GLCD_A0 GPIO_PORTD_BASE
+#define GLCD_A0P GPIO_PIN_2
 /** The clock pin */
 //#define GLCD_SCL GPIO_PORTB_BASE
-#define GLCD_SCL GPIO_PORTA_BASE
+#define GLCD_SCL GPIO_PORTD_BASE
 //#define GLCD_SCLP GPIO_PIN_0
-#define GLCD_SCLP GPIO_PIN_2
+#define GLCD_SCLP GPIO_PIN_0
 /** The data pin */
 //#define GLCD_SDA GPIO_PORTB_BASE
-#define GLCD_SDA GPIO_PORTA_BASE
+#define GLCD_SDA GPIO_PORTD_BASE
 //#define GLCD_SDAP GPIO_PIN_5
-#define GLCD_SDAP GPIO_PIN_5
+#define GLCD_SDAP GPIO_PIN_3
 
 #define BIT_SET(Location,Mask) GPIOPinWrite(Location, Mask, Mask)//((Location) |= (Mask))
 #define BIT_CLR(Location,Mask) GPIOPinWrite(Location, Mask, 0x00)//((Location) &= ~(Mask))

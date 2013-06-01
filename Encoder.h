@@ -32,12 +32,12 @@
 // with pull-ups, and a value of 0 means the switch is pressed.
 //
 //*****************************************************************************
-#define ENCODER_GPIO_PERIP     SYSCTL_PERIPH_GPIOA
-#define ENCODER_GPIO_BASE      GPIO_PORTA_BASE
+#define ENCODER_GPIO_PERIP     SYSCTL_PERIPH_GPIOE
+#define ENCODER_GPIO_BASE      GPIO_PORTE_BASE
 
 #define NUM_LINES               2
-#define ENCODA            		GPIO_PIN_6
-#define ENCODB					GPIO_PIN_7
+#define ENCODA            		GPIO_PIN_0
+#define ENCODB					GPIO_PIN_5
 
 #define ALL_LINES             (ENCODA | ENCODB)
 

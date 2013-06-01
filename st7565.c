@@ -181,11 +181,11 @@ void glcd_init() {
     //Enable Ports for use
 	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
 	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
-	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
     	//Enable Pins as inputs
-	GPIOPinTypeGPIOOutput(GPIO_PORTB_BASE, GPIO_PIN_1);
-	GPIOPinTypeGPIOOutput(GPIO_PORTE_BASE, GPIO_PIN_4|GPIO_PIN_5);
-	GPIOPinTypeGPIOOutput(GPIO_PORTA_BASE, GPIO_PIN_2|GPIO_PIN_5);
+	//GPIOPinTypeGPIOOutput(GPIO_PORTB_BASE, GPIO_PIN_1);
+	GPIOPinTypeGPIOOutput(GPIO_PORTE_BASE, GPIO_PIN_4);
+	GPIOPinTypeGPIOOutput(GPIO_PORTD_BASE, GPIO_PIN_1|GPIO_PIN_2);
 	// Select the chip
 	 BIT_CLR(((GLCD_CS1)),GLCD_CS1P);//GLCD_CS1 = 0;
 
@@ -201,25 +201,25 @@ void glcd_init() {
     // Datasheet says max 1ms here
     //DelayMs(1);
     //Initializing the pins
-	SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI0);
+	SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI3);
 
 
 
 	// Connect SPI to PA2 (clock) and PA5(TX)
 	//SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);//TODO make rom
-	GPIOPinConfigure(GPIO_PA2_SSI0CLK);
-	GPIOPinConfigure(GPIO_PA5_SSI0TX);
+	GPIOPinConfigure(GPIO_PD0_SSI3CLK);
+	GPIOPinConfigure(GPIO_PD3_SSI3TX);
 	//GPIOPinTypeSSI(GPIO_PORTA_BASE, SSI_CLK | SSI_TX);
-	GPIOPinTypeSSI(GPIO_PORTA_BASE, GPIO_PIN_2|GPIO_PIN_5);
+	GPIOPinTypeSSI(GPIO_PORTD_BASE, GPIO_PIN_0|GPIO_PIN_3);
 	//
 		// Configure SSI0
 		//
-		SSIConfigSetExpClk(SSI0_BASE, SysCtlClockGet(), SSI_FRF_MOTO_MODE_0,  SSI_MODE_MASTER, SysCtlClockGet()/2, 8);
+		SSIConfigSetExpClk(SSI3_BASE, SysCtlClockGet(), SSI_FRF_MOTO_MODE_0,  SSI_MODE_MASTER, SysCtlClockGet()/2, 8);
 
 		//
 		// Enable the SSI module.
 		//
-		SSIEnable(SSI0_BASE);
+		SSIEnable(SSI3_BASE);
 
 
     // Set LCD bias to 1/9th
@@ -271,11 +271,11 @@ void glcd_data(unsigned char data) {
     // Select the chip
     BIT_CLR(((GLCD_CS1)),GLCD_CS1P);//GLCD_CS1 = 0;
 
-    SSIDataPut(SSI0_BASE, data);
+    SSIDataPut(SSI3_BASE, data);
     //
     // Wait until SSI is done transferring all the data in the transmit FIFO
     //
-    while(SSIBusy(SSI0_BASE))
+    while(SSIBusy(SSI3_BASE))
     {
     }
 
@@ -296,11 +296,11 @@ void glcd_command(char command) {
     // Select the chip
     BIT_CLR(((GLCD_CS1)),GLCD_CS1P);//GLCD_CS1 = 0;
 
-    SSIDataPut(SSI0_BASE, command);
+    SSIDataPut(SSI3_BASE, command);
     //
     // Wait until SSI is done transferring all the data in the transmit FIFO
     //
-    while(SSIBusy(SSI0_BASE))
+    while(SSIBusy(SSI3_BASE))
     {
     }
 

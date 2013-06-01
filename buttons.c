@@ -46,6 +46,10 @@
 #include "Ps2Keyboard.h"
 /*  Include the State info so buttons can change the states */
 extern UISTATEINFO StateInfo;
+extern INT8U ScrollCnt;
+
+void int_to_string(INT16U x, INT8U *string);
+INT8U scrollcountstring[5];
 TIME TimeOfDay={0,0,0};
 //*****************************************************************************
 //
@@ -179,7 +183,7 @@ ButtonsInit(void)
     // Enable the GPIO port to which the pushbuttons are connected.
     //
 	/* NEED OR NOT DEPENDING ON WHAT MODULE I ENABLE FIRST UNILL FINAL PIN MAPPING*/
-    //ROM_SysCtlPeripheralEnable(BUTTONS_GPIO_PERIP);
+    ROM_SysCtlPeripheralEnable(BUTTONS_GPIO_PERIP);
 
     //
     // Unlock PF0 so we can change it to a GPIO input
@@ -218,8 +222,9 @@ Void ButtonTask(UArg a0, UArg a1){
 	//INT8U key=0;
 	while(1){
 		buttondata = ButtonsPoll(0,0);
+		//pend on state sem
 		switch(buttondata & ALL_BUTTONS){
-			case LEFT_BUTTON:
+			case LEFT_BUTTON://F1
 				//code
 				//Change State
 				////gatetKey = GateMutexPri_enter(gatemutexPri);//Dont Think I need Button Mutex
@@ -230,14 +235,14 @@ Void ButtonTask(UArg a0, UArg a1){
 
 			break;
 
-			case DOWN_BUTTON:
+			case DOWN_BUTTON://F2
 				//code
 				StateInfo.UserState = ADD;
 				//set re-initialize variable
 				StateInfo.StateStatus = INIT;
 			break;
 
-			case UP_BUTTON:
+			case UP_BUTTON://F3
 				//code
 				//change state
 				StateInfo.UserState = REMOVE;
@@ -245,7 +250,7 @@ Void ButtonTask(UArg a0, UArg a1){
 				StateInfo.StateStatus = INIT;
 			break;
 
-			case RIGHT_BUTTON:
+			case RIGHT_BUTTON://F4
 				//code
 				//change state
 				StateInfo.UserState = INV;
@@ -260,10 +265,34 @@ Void ButtonTask(UArg a0, UArg a1){
 		Task_sleep(10);
 		TimeGet(&TimeOfDay);
 		GlcdDispTime(TimeOfDay.hr,TimeOfDay.min,TimeOfDay.sec);
+		int_to_string((INT16U) ScrollCnt,scrollcountstring);
+		draw_text_bmp(scrollcountstring,96,TPAGE0,MyFont,1);
 		glcd_refresh();
 	}
 }
 
+void int_to_string(INT16U x, INT8U *string){
+	int i=0;
+	int y=x;
+	int temp_var=0;
+#if 1
+	if(x==0){
+		string[i]=x+48;
+		string[i+1]='\0';
+	}
+#endif
+	else{
+		while(y>0){
+			temp_var=(y%10);
+			string[i]=48+temp_var;
+			y=y/10;
+			i++;
+		}
+		string[i]='\0';
+	}
+
+
+}
 
 
 

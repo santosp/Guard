@@ -47,7 +47,7 @@
 #define UP_BUTTON           	GPIO_PIN_6
 #define RIGHT_BUTTON			GPIO_PIN_7
 
-#define ALL_BUTTONS             (LEFT_BUTTON | DOWN_BUTTON |UP_BUTTON | RIGHT_BUTTON)
+#define ALL_BUTTONS             (LEFT_BUTTON | DOWN_BUTTON | UP_BUTTON | RIGHT_BUTTON)
 
 //*****************************************************************************
 //

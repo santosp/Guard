@@ -364,13 +364,13 @@ Void main()
     System_flush();
 
     ClockInit();
-	//EncoderInit();
+
     glcd_init();
     glcd_command(GLCD_CMD_DISPLAY_ON);
 	glcd_blank();
 	ButtonsInit();
 	KeyboardInit();
-
+	EncoderInit();
     BIOS_start();        /* enable interrupts and start SYS/BIOS */
 }
 
