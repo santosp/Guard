@@ -47,6 +47,16 @@
 #define LPAGE6 7
 #define LPAGE7 8
 
+
+#define FPAGE0 3
+#define FPAGE1 11
+#define FPAGE2 19
+#define FPAGE3 27
+#define FPAGE4 35
+#define FPAGE5 43
+#define FPAGE6 51
+#define FPAGE7 59
+
 extern bounding_box_t draw_text_bmp(INT8U *string, unsigned char x, unsigned char y, const unsigned char *font, unsigned char spacing);
 
 bounding_box_t draw_char_bmp(unsigned char c, unsigned char x, unsigned char y,const unsigned char *font) ;

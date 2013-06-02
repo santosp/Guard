@@ -19,6 +19,8 @@
 #define F10 0x89
 #define F11 0x90
 #define F12 0x91
+#define CR 0x10
+#define BS 0x08
 
 // Unshifted characters
 extern const INT8U unshifted[][2];

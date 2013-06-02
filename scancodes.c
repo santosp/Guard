@@ -35,7 +35,7 @@ const INT8U unshifted[][2] = {
 	{0x45,'0'},
 	{0x4e,'-'},
 	{0x55,'='},
-	{0x66,NOTMAPPED}, //BACKSPACE
+	{0x66,BS}, //BACKSPACE
 	{0x66,NOTMAPPED}, //TAB
 	{0x15,'q'},
 	{0x1d,'w'},
@@ -66,7 +66,7 @@ const INT8U unshifted[][2] = {
 	{0x54,'['},
 	{0x5b,']'},
 	{0x5d,'\\'},//'\'
-	{0x58,NOTMAPPED}, // Caps lock but shouldnt even get here
+	{0x58,CR}, // Caps lock but shouldnt even get here
 	{0x4c,';'},
 	{0x52,'\''},//'
 	{0x5a,NOTMAPPED}, //ENTER
@@ -125,7 +125,7 @@ const INT8U  shifted[][2] = {
 	{0x45,')'},
 	{0x4e,'_'},
 	{0x55,'+'},
-	{0x66,NOTMAPPED}, //BACKSPACE
+	{0x66,BS}, //BACKSPACE
 	{0x66,NOTMAPPED}, //TAB
 	{0x15,'Q'},
 	{0x1d,'W'},
@@ -159,7 +159,7 @@ const INT8U  shifted[][2] = {
 	{0x58,NOTMAPPED}, // Caps lock but shouldnt even get here
 	{0x4c,':'},
 	{0x52,'"'},//'
-	{0x5a,NOTMAPPED}, //ENTER
+	{0x5a,CR}, //ENTER
 	{0x12,NOTMAPPED}, // left shift but shouldnt even get here
 	{0x41,'<'},
 	{0x49,'>'},

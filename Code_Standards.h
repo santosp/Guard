@@ -16,7 +16,7 @@ typedef unsigned long   INT32U;
 typedef signed long     INT32S;
 
 typedef enum {WELCOME,MAIN,ADD,REMOVE,INV}UISTATE;
-typedef enum {INIT,GETUPC,INVALID,FIND,FOUND,NOMATCH}SUBSTATE;
+typedef enum {INIT,GETUPC,INVALID,FIND,FOUND,EXP,QUAN,NOMATCH}SUBSTATE;
 //typedef enum {INIT,INVALID}WELCOMESUBSTATE;
 
 typedef struct{
@@ -27,8 +27,8 @@ typedef struct{
 
 typedef struct{
 	INT8U Discription[16];
-	INT8U Experation[6];
-	INT8U Timestamp[6];
+	INT8U Experation[8];
+	INT8U Timestamp[8];
 	INT8U UPC[11];
 	INT8U Quantity;
 }ITEMINFO;

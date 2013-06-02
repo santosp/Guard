@@ -11,13 +11,13 @@ CFG_SRCS += \
 
 C_SRCS += \
 ../Clock.c \
-../Encoder.c \
 ../Font.c \
 ../Graphics_Bmp.c \
 ../Items.c \
 ../Ps2Keyboard.c \
+../StateManagement.c \
+../UI.c \
 ../UiMessages.c \
-../buttons.c \
 ../graphics.c \
 ../main.c \
 ../scancodes.c \
@@ -25,13 +25,13 @@ C_SRCS += \
 
 OBJS += \
 ./Clock.obj \
-./Encoder.obj \
 ./Font.obj \
 ./Graphics_Bmp.obj \
 ./Items.obj \
 ./Ps2Keyboard.obj \
+./StateManagement.obj \
+./UI.obj \
 ./UiMessages.obj \
-./buttons.obj \
 ./graphics.obj \
 ./main.obj \
 ./scancodes.obj \
@@ -43,13 +43,13 @@ GEN_SRCS += \
 
 C_DEPS += \
 ./Clock.pp \
-./Encoder.pp \
 ./Font.pp \
 ./Graphics_Bmp.pp \
 ./Items.pp \
 ./Ps2Keyboard.pp \
+./StateManagement.pp \
+./UI.pp \
 ./UiMessages.pp \
-./buttons.pp \
 ./graphics.pp \
 ./main.pp \
 ./scancodes.pp \
@@ -73,13 +73,13 @@ GEN_MISC_DIRS__QUOTED += \
 
 C_DEPS__QUOTED += \
 "Clock.pp" \
-"Encoder.pp" \
 "Font.pp" \
 "Graphics_Bmp.pp" \
 "Items.pp" \
 "Ps2Keyboard.pp" \
+"StateManagement.pp" \
+"UI.pp" \
 "UiMessages.pp" \
-"buttons.pp" \
 "graphics.pp" \
 "main.pp" \
 "scancodes.pp" \
@@ -87,13 +87,13 @@ C_DEPS__QUOTED += \
 
 OBJS__QUOTED += \
 "Clock.obj" \
-"Encoder.obj" \
 "Font.obj" \
 "Graphics_Bmp.obj" \
 "Items.obj" \
 "Ps2Keyboard.obj" \
+"StateManagement.obj" \
+"UI.obj" \
 "UiMessages.obj" \
-"buttons.obj" \
 "graphics.obj" \
 "main.obj" \
 "scancodes.obj" \
@@ -101,13 +101,13 @@ OBJS__QUOTED += \
 
 C_SRCS__QUOTED += \
 "../Clock.c" \
-"../Encoder.c" \
 "../Font.c" \
 "../Graphics_Bmp.c" \
 "../Items.c" \
 "../Ps2Keyboard.c" \
+"../StateManagement.c" \
+"../UI.c" \
 "../UiMessages.c" \
-"../buttons.c" \
 "../graphics.c" \
 "../main.c" \
 "../scancodes.c" \

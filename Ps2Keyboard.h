@@ -60,5 +60,5 @@ typedef enum{PS2START,PS2DATA,PS2PARITY,PS2STOP}PS2STATE;
 
 extern void KeyboardInit(void);
 extern INT8U KeyPend(INT16U tout);
-
+extern INT8U StatePend(INT16U tout);
 #endif /* PS2KEYBOARD_H_ */

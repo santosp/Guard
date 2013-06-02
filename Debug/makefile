@@ -12,13 +12,13 @@ $(GEN_CMDS__FLAG) \
 "./scancodes.obj" \
 "./main.obj" \
 "./graphics.obj" \
-"./buttons.obj" \
 "./UiMessages.obj" \
+"./UI.obj" \
+"./StateManagement.obj" \
 "./Ps2Keyboard.obj" \
 "./Items.obj" \
 "./Graphics_Bmp.obj" \
 "./Font.obj" \
-"./Encoder.obj" \
 "./Clock.obj" \
 -l"libc.a" \
 -l"C:\StellarisWare\driverlib\ccs-cm4f\Debug\driverlib-cm4f.lib" \
@@ -135,8 +135,8 @@ Grocery.out: $(OBJS) $(CMD_SRCS) $(GEN_CMDS)
 clean:
 	-$(RM) $(TMS470_EXECUTABLE_OUTPUTS__QUOTED)$(GEN_SRCS__QUOTED)$(GEN_MISC_FILES__QUOTED)$(GEN_OPTS__QUOTED)$(GEN_CMDS__QUOTED) "Grocery.out"
 	-$(RMDIR) $(GEN_MISC_DIRS__QUOTED)
-	-$(RM) "Clock.pp" "Encoder.pp" "Font.pp" "Graphics_Bmp.pp" "Items.pp" "Ps2Keyboard.pp" "UiMessages.pp" "buttons.pp" "graphics.pp" "main.pp" "scancodes.pp" "st7565.pp" 
-	-$(RM) "Clock.obj" "Encoder.obj" "Font.obj" "Graphics_Bmp.obj" "Items.obj" "Ps2Keyboard.obj" "UiMessages.obj" "buttons.obj" "graphics.obj" "main.obj" "scancodes.obj" "st7565.obj" 
+	-$(RM) "Clock.pp" "Font.pp" "Graphics_Bmp.pp" "Items.pp" "Ps2Keyboard.pp" "StateManagement.pp" "UI.pp" "UiMessages.pp" "graphics.pp" "main.pp" "scancodes.pp" "st7565.pp" 
+	-$(RM) "Clock.obj" "Font.obj" "Graphics_Bmp.obj" "Items.obj" "Ps2Keyboard.obj" "StateManagement.obj" "UI.obj" "UiMessages.obj" "graphics.obj" "main.obj" "scancodes.obj" "st7565.obj" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

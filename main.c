@@ -14,8 +14,8 @@
 
 
 
-#include "Encoder.h"
-#include "Buttons.h"
+
+
 #include "Graphics_Bmp.h"
 #include "Font.h"
 #include "st7565.h"
@@ -24,11 +24,11 @@
 #include "Ps2Keyboard.h"
 
 #include "UiMessages.h"
-
+#include "UI.h"
 #include "Items.h"
 /*=======*/
 //Globals
-UISTATEINFO StateInfo={WELCOME,INIT,FALSE}; // NEED TO START IN WELCOME not Remove
+UISTATEINFO StateInfo={ADD,INIT,FALSE}; // NEED TO START IN WELCOME not Remove
 UISTATE LastState=MAIN;
 
 
@@ -45,9 +45,13 @@ Void UiTask(UArg a0, UArg a1)
 	INT8U key=0;
 	INT8U timedatebuffer[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 	INT8U upcbuffer[12]={0,0,0,0,0,0,0,0,0,0,0,0};
+	INT8U expbuffer[]={0,0,'/',0,0,'/',0,0,0};
 	INT8U upccount=0,inputcount=0,itemfound=0,lookupcount=0,upc_count=0;
 	INT8U clearcount=0;
-	INT8U symbolcount=0;
+	INT8U passflag=0;
+	INT8U expcount=0;
+	INT8U quancount=0;
+	INT8U count=0;
 	while(1){
 		switch(StateInfo.UserState){
 			case WELCOME:
@@ -58,7 +62,7 @@ Void UiTask(UArg a0, UArg a1)
 				break;//End of INIT State
 				/*-----------------------------------------------------------*/
 				case GETUPC:
-					key=KeyPend(WAIT10);
+					key=KeyPend(0);
 					if(upccount<6){
 						if(key>='0' && key<='9'){
 							timedatebuffer[upccount]=key;
@@ -131,25 +135,28 @@ Void UiTask(UArg a0, UArg a1)
 			case ADD:
 				switch (StateInfo.StateStatus){
 				case INIT:
-					//Initialize state
+
 					AddMsg();
-					//draw_text_bmp((INT8U *)"ADD STATE ",16,PAGE5,MyFont,1);
-					//draw_text_bmp((INT8U *)"         ",16,PAGE3,MyFont,1);// clear found or not space
-					//draw_text_bmp((INT8U *)"             ",16,PAGE6,MyFont,1);//clear upcbuffer space
+
 					for(clearcount=0;clearcount<MAXUPC;clearcount++){// clear buffer
 						upcbuffer[clearcount]=0;
 					}
 					upccount=0;
 					itemfound=0;
 					StateInfo.StateStatus = GETUPC;
+					StateInfo.WaitforKey = FALSE;
 				break;//End of INIT State
 				/*-----------------------------------------------------------*/
 				case GETUPC:
-					key=KeyPend(WAIT10);
-					if(key>0x00 && key<'~'){
+					key=KeyPend(0);
+					if(key>='0' && key<='9'){
 						upcbuffer[upccount]=key;
 						upccount++;
-						draw_text_bmp(upcbuffer,16,PAGE6,MyFont,1);
+						draw_text_bmp(upcbuffer,16,TPAGE5,MyFont,1);
+					}else if(key==0x08){
+						upccount--;
+						upcbuffer[upccount]=' ';
+						draw_text_bmp(upcbuffer,16,TPAGE5,MyFont,1);
 					}
 					key=0;
 					//Continues to look for UPC if there was a valid all number entry
@@ -187,40 +194,63 @@ Void UiTask(UArg a0, UArg a1)
 								//found item
 								itemfound=1;
 								StateInfo.StateStatus = FOUND;
-								draw_text_bmp((INT8U *)"FOUND ",16,PAGE3,MyFont,1);
+								//draw_text_bmp((INT8U *)"FOUND ",16,PAGE3,MyFont,1);
 							}
 						}
 						else{
 							//No item of this UPC number
 							//Give user option to either re enter or add to inventory
 							StateInfo.StateStatus = NOMATCH;
-							draw_text_bmp((INT8U *)"NO Match ",16,PAGE3,MyFont,1);
+							//draw_text_bmp((INT8U *)"NO Match ",16,PAGE3,MyFont,1);
 						}
 					}
 				break;//End of Find
 				/*-----------------------------------------------------------*/
 				case FOUND:
-					//increment quantity of look up table item and on Itemblock
-					ItemBlock1[lookupcount-1].Quantity++;
+					AddMsgFound();
+					StateInfo.StateStatus = EXP;
+				break;//End of FOUND
+				/*-----------------------------------------------------------*/
+				case EXP:
+					if(!passflag){
+						expcount=ReceiveExpDate(expbuffer,expcount);
+						if(expcount>=7){
+							passflag=TRUE;
+						}
+						else{}
+					}
+					else{
+						//add to items expdate
+						count=expcount;
+						for(count=0;count<=expcount;count++){
+							ItemBlock1[lookupcount-1].Experation[count]=expbuffer[count];
+						}
+
+						StateInfo.StateStatus = QUAN;
+						passflag=FALSE;
+						AddMsgQuan();
+					}
+				break;//End of FOUND
+				/*-----------------------------------------------------------*/
+				case QUAN:
+					if(!passflag){
+
+					}
+					else{
+					ItemBlock1[lookupcount-1].Quantity=+quancount;
 					ItemLookUp[lookupcount-1][0]=ItemBlock1[lookupcount-1].Quantity;
 					StateInfo.StateStatus = INIT;
+					}
 				break;//End of FOUND
 				/*-----------------------------------------------------------*/
 				case NOMATCH:
 					if(!StateInfo.WaitforKey){
-						draw_text_bmp((INT8U *)"No Match, Would you like to add UPC?Y/N?",16,PAGE7,MyFont,1);
+						AddMsgNoMatch();
+						//draw_text_bmp((INT8U *)"No Match, Would you like to add UPC?Y/N?",16,PAGE7,MyFont,1);
 						StateInfo.WaitforKey=TRUE;
 					}
 					else{
-						key=KeyPend(WAIT10);
-						if(key=='Y'){
-							//find a unused structure
-							//add info
-
-						}
-						else if(key=='N'){
-							StateInfo.StateStatus = INIT;
-						}
+						//Loop until a function key is pressed
 					}
 				break;//End of NOMATCH
 				/*-----------------------------------------------------------*/
@@ -233,23 +263,25 @@ Void UiTask(UArg a0, UArg a1)
 				switch (StateInfo.StateStatus){
 				case INIT:
 					//Initialize state
-					draw_text_bmp((INT8U *)"REMOVE STATE ",16,PAGE5,MyFont,1);
-					StateInfo.StateStatus = GETUPC;
-					draw_text_bmp((INT8U *)"         ",16,PAGE3,MyFont,1);// clear found or not space
-					draw_text_bmp((INT8U *)"             ",16,PAGE6,MyFont,1);//clear upcbuffer space
+					RemoveMsg();
+					//draw_text_bmp((INT8U *)"REMOVE STATE ",16,PAGE5,MyFont,1);
+
+					//draw_text_bmp((INT8U *)"         ",16,PAGE3,MyFont,1);// clear found or not space
+					//draw_text_bmp((INT8U *)"             ",16,PAGE6,MyFont,1);//clear upcbuffer space
 					for(clearcount=0;clearcount<11;clearcount++){// clear buffer
 						upcbuffer[clearcount]=0;
 					}
 					upccount=0;
 					itemfound=0;
+					StateInfo.StateStatus = GETUPC;
 				break;//End of INIT State
 				/*-----------------------------------------------------------*/
 				case GETUPC:
-					key=KeyPend(WAIT10);
-					if(key>0&&key<0x7E){
+					key=KeyPend(0);
+					if(key>='0' && key<='9'){
 						upcbuffer[upccount]=key;
 						upccount++;
-						draw_text_bmp(upcbuffer,16,PAGE6,MyFont,1);
+						draw_text_bmp(upcbuffer,16,TPAGE5,MyFont,1);
 					}
 					key=0;
 					if(upccount>10){
@@ -286,14 +318,14 @@ Void UiTask(UArg a0, UArg a1)
 								//found item
 								itemfound=1;
 								StateInfo.StateStatus = FOUND;
-								draw_text_bmp((INT8U *)"FOUND ",16,PAGE3,MyFont,1);
+								//draw_text_bmp((INT8U *)"FOUND ",16,PAGE3,MyFont,1);
 							}
 						}
 						else{
 							//No item of this UPC number
 							//Give user option to either re enter or add to inventory
 							StateInfo.StateStatus = NOMATCH;
-							draw_text_bmp((INT8U *)"NO Match ",16,PAGE3,MyFont,1);
+							//draw_text_bmp((INT8U *)"NO Match ",16,PAGE3,MyFont,1);
 						}
 					}
 				break;//End of FIND State
@@ -321,7 +353,9 @@ Void UiTask(UArg a0, UArg a1)
 				switch (StateInfo.StateStatus){
 				case INIT:
 					//Initialize state
-					draw_text_bmp((INT8U *)"INV STATE ",16,PAGE5,MyFont,1);
+					InvMsg();
+					StateInfo.StateStatus = GETUPC;
+					//draw_text_bmp((INT8U *)"INV STATE ",16,PAGE5,MyFont,1);
 				break;//End of INIT State
 				/*-----------------------------------------------------------*/
 				case GETUPC:
@@ -368,9 +402,7 @@ Void main()
     glcd_init();
     glcd_command(GLCD_CMD_DISPLAY_ON);
 	glcd_blank();
-	ButtonsInit();
 	KeyboardInit();
-	EncoderInit();
     BIOS_start();        /* enable interrupts and start SYS/BIOS */
 }
 

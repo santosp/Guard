@@ -169,28 +169,24 @@ main.obj: C:/ti/bios_6_35_01_29/packages/ti/sysbios/knl/Queue.h
 main.obj: C:/ti/xdctools_3_25_00_48/packages/xdc/runtime/Assert.h
 main.obj: C:/ti/bios_6_35_01_29/packages/ti/sysbios/knl/Task.h
 main.obj: C:/ti/xdctools_3_25_00_48/packages/xdc/runtime/IGateProvider.h
-main.obj: ../Encoder.h
-main.obj: C:/StellarisWare/inc/hw_types.h
-main.obj: C:/StellarisWare/inc/hw_memmap.h
-main.obj: C:/StellarisWare/driverlib/gpio.h
-main.obj: C:/StellarisWare/driverlib/pin_map.h
-main.obj: C:/StellarisWare/driverlib/rom.h
-main.obj: C:/StellarisWare/driverlib/sysctl.h
-main.obj: ../Code_Standards.h
-main.obj: C:/StellarisWare/inc/lm4f120h5qr.h
-main.obj: C:/ti/xdctools_3_25_00_48/packages/xdc/runtime/System.h
-main.obj: ../Buttons.h
 main.obj: ../Graphics_Bmp.h
 main.obj: ../graphics.h
 main.obj: C:/ti/ccsv5/tools/compiler/arm_5.0.4/include/stdlib.h
 main.obj: C:/ti/ccsv5/tools/compiler/arm_5.0.4/include/linkage.h
+main.obj: C:/StellarisWare/inc/hw_types.h
+main.obj: C:/StellarisWare/inc/hw_memmap.h
 main.obj: C:/StellarisWare/inc/hw_gpio.h
+main.obj: C:/StellarisWare/driverlib/sysctl.h
+main.obj: C:/StellarisWare/driverlib/gpio.h
+main.obj: C:/StellarisWare/driverlib/pin_map.h
+main.obj: ../Code_Standards.h
 main.obj: ../st7565.h
 main.obj: ../Font.h
 main.obj: ../Clock.h
 main.obj: C:/StellarisWare/inc/hw_ints.h
 main.obj: C:/StellarisWare/driverlib/timer.h
 main.obj: C:/StellarisWare/driverlib/interrupt.h
+main.obj: C:/StellarisWare/driverlib/rom.h
 main.obj: ../st7565-config.h
 main.obj: ../Ps2Keyboard.h
 main.obj: C:/ti/bios_6_35_01_29/packages/ti/sysbios/knl/Semaphore.h
@@ -217,8 +213,10 @@ main.obj: C:/ti/bios_6_35_01_29/packages/ti/sysbios/knl/Queue.h
 main.obj: C:/ti/xdctools_3_25_00_48/packages/xdc/runtime/Diags.h
 main.obj: C:/ti/bios_6_35_01_29/packages/ti/sysbios/knl/Task.h
 main.obj: C:/StellarisWare/driverlib/ssi.h
+main.obj: C:/StellarisWare/inc/lm4f120h5qr.h
 main.obj: ../scancodes.h
 main.obj: ../UiMessages.h
+main.obj: ../UI.h
 main.obj: ../Items.h
 
 ../main.c: 
@@ -390,28 +388,24 @@ C:/ti/bios_6_35_01_29/packages/ti/sysbios/knl/Queue.h:
 C:/ti/xdctools_3_25_00_48/packages/xdc/runtime/Assert.h: 
 C:/ti/bios_6_35_01_29/packages/ti/sysbios/knl/Task.h: 
 C:/ti/xdctools_3_25_00_48/packages/xdc/runtime/IGateProvider.h: 
-../Encoder.h: 
-C:/StellarisWare/inc/hw_types.h: 
-C:/StellarisWare/inc/hw_memmap.h: 
-C:/StellarisWare/driverlib/gpio.h: 
-C:/StellarisWare/driverlib/pin_map.h: 
-C:/StellarisWare/driverlib/rom.h: 
-C:/StellarisWare/driverlib/sysctl.h: 
-../Code_Standards.h: 
-C:/StellarisWare/inc/lm4f120h5qr.h: 
-C:/ti/xdctools_3_25_00_48/packages/xdc/runtime/System.h: 
-../Buttons.h: 
 ../Graphics_Bmp.h: 
 ../graphics.h: 
 C:/ti/ccsv5/tools/compiler/arm_5.0.4/include/stdlib.h: 
 C:/ti/ccsv5/tools/compiler/arm_5.0.4/include/linkage.h: 
+C:/StellarisWare/inc/hw_types.h: 
+C:/StellarisWare/inc/hw_memmap.h: 
 C:/StellarisWare/inc/hw_gpio.h: 
+C:/StellarisWare/driverlib/sysctl.h: 
+C:/StellarisWare/driverlib/gpio.h: 
+C:/StellarisWare/driverlib/pin_map.h: 
+../Code_Standards.h: 
 ../st7565.h: 
 ../Font.h: 
 ../Clock.h: 
 C:/StellarisWare/inc/hw_ints.h: 
 C:/StellarisWare/driverlib/timer.h: 
 C:/StellarisWare/driverlib/interrupt.h: 
+C:/StellarisWare/driverlib/rom.h: 
 ../st7565-config.h: 
 ../Ps2Keyboard.h: 
 C:/ti/bios_6_35_01_29/packages/ti/sysbios/knl/Semaphore.h: 
@@ -438,6 +432,8 @@ C:/ti/bios_6_35_01_29/packages/ti/sysbios/knl/Queue.h:
 C:/ti/xdctools_3_25_00_48/packages/xdc/runtime/Diags.h: 
 C:/ti/bios_6_35_01_29/packages/ti/sysbios/knl/Task.h: 
 C:/StellarisWare/driverlib/ssi.h: 
+C:/StellarisWare/inc/lm4f120h5qr.h: 
 ../scancodes.h: 
 ../UiMessages.h: 
+../UI.h: 
 ../Items.h: 

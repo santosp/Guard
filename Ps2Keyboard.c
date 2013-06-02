@@ -17,6 +17,7 @@ static void Decode(INT8U sc);
 
 /* Include Semaphore to module */
 extern Semaphore_Handle KeySem;
+extern Semaphore_Handle StateSem;
 //extern Semaphore_Handle DataSem;//For use with SPI
 
 /* Global variables*/
@@ -264,6 +265,24 @@ INT8U KeyPend(INT16U tout){
 		KeyBuffer=0;
 		return key;
 	}
+}/*======================================================================*/
+/*  Type: Function - Public
+	Name: KeyPend
+	 - Public function that uses a private semaphore to wait for a keypress
+	 or a timeout, if there is a timeout, it returns a zero.
+*/
+INT8U StatePend(INT16U tout){
+	Bool timeout;
+	INT8U key=0;
+	timeout=Semaphore_pend(StateSem,tout);
+	if(timeout==FALSE){
+		return 0;
+	}
+	else{
+		key=KeyBuffer;
+		KeyBuffer=0;
+		return key;
+	}
 }
 /*======================================================================*/
 /*  Type: Task - Private
@@ -277,7 +296,14 @@ Void KeyTask(UArg a0, UArg a1){
 		key = GetKey();
 		if(key>0){
 			KeyBuffer = key;
-			Semaphore_post(KeySem);
+			if(key<=F4&&key>=F1){
+				Semaphore_post(StateSem);
+			}
+			else{
+
+				Semaphore_post(KeySem);
+			}
+
 			key=0;
 		}
 	}
