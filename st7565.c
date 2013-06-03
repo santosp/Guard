@@ -120,7 +120,7 @@ void glcd_blank_pagexy(unsigned char page,unsigned char n, unsigned char x) {
 
         // We iterate to 132 as the internal buffer is 65*132, not
         // 64*124.
-        for (x = 0; x < 132; x++) {
+        for (n; n < x; n++) {
             glcd_data(0x00);
         }
     //}

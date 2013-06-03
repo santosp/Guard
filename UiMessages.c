@@ -62,8 +62,12 @@ void AddMsg(void){
 	glcd_blank_page(LPAGE5);
 	glcd_blank_page(LPAGE6);
 	glcd_blank_page(LPAGE7);
+	draw_line(1,8,128,8,1);
+	draw_line(33,1,33,8,1);
+	draw_line(96,1,96,8,1);
 	draw_text_bmp((INT8U *)"Add Item",44,TPAGE0,MyFont,1);
-	draw_text_bmp((INT8U *)"Please use Barcodescanner Or Keyboard",16,TPAGE2,MyFont,1);
+	draw_text_bmp((INT8U *)"Please use Barcodescanner Or",16,TPAGE2,MyFont,1);
+	draw_text_bmp((INT8U *)"Keyboard to Enter UPC",16,TPAGE3,MyFont,1);
 	draw_line(1,PAGE6,128,PAGE6,1);
 	draw_line(31,49,31,64,1);
 	draw_line(63,49,63,64,1);
@@ -99,10 +103,11 @@ void AddMsgFound(void){
 	draw_line(31,49,31,64,1);
 	draw_line(63,49,63,64,1);
 	draw_line(95,49,95,64,1);
-	draw_text_bmp((INT8U *)"Found!",16,TPAGE2,MyFont,1);
+	draw_text_bmp((INT8U *)"Found!: ",1,TPAGE1,MyFont,1);
 	//insert item name after fount on page2
-	draw_text_bmp((INT8U *)"Please Enter Expiration Date",1,TPAGE3,MyFont,1);
-	draw_text_bmp((INT8U *)"In Format MM/DD/YYYY",1,TPAGE4,MyFont,1);
+	draw_text_bmp((INT8U *)"Please Enter Expiration Date",1,TPAGE2,MyFont,1);
+	draw_text_bmp((INT8U *)"In Format MM/DD/YYYY",1,TPAGE3,MyFont,1);
+	draw_text_bmp((INT8U *)"And then press enter",1,TPAGE4,MyFont,1);
 	//inverted box on page 5
 }
 
@@ -119,7 +124,8 @@ void AddMsgQuan(void){
 	draw_line(63,49,63,64,1);
 	draw_line(95,49,95,64,1);
 	//insert item name after fount on page2
-	draw_text_bmp((INT8U *)"Please Enter Quantity",1,TPAGE3,MyFont,1);
+	draw_text_bmp((INT8U *)"Please Enter Quantity",1,TPAGE1,MyFont,1);
+	draw_text_bmp((INT8U *)"In Format 005",1,TPAGE3,MyFont,1);
 	draw_text_bmp((INT8U *)"(Max 255)",1,TPAGE4,MyFont,1);
 	//inverted box on page 5
 }
@@ -246,4 +252,7 @@ void InvMsg(void){
 
 	//inverted box on page 4
 	//last two pages with F1=Main Menu, F2=Remove Item, F3=Add By Name, F4=View Inv
+}
+void InvArrow(void){
+	draw_text_bmp((INT8U *)"->",33,FPAGE6,MyFont,1);
 }

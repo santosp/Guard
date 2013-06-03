@@ -33,6 +33,14 @@ typedef struct{
 	INT8U Quantity;
 }ITEMINFO;
 
+typedef struct{
+	INT8U ArrowCount;
+	INT8U PageCount;
+	INT8U LastPage;
+	INT8U ItemCount;
+	INT8U LastArrow;
+}INVINFO;
+
 /* Constant Defines */
 
 #define MAXUPC 11

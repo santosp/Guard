@@ -31,6 +31,12 @@ extern const ti_sysbios_knl_Semaphore_Handle StateSem;
 #include <ti/sysbios/knl/Task.h>
 extern const ti_sysbios_knl_Task_Handle Display;
 
+#include <ti/sysbios/knl/Semaphore.h>
+extern const ti_sysbios_knl_Semaphore_Handle ArrowSem;
+
+#include <ti/sysbios/knl/Task.h>
+extern const ti_sysbios_knl_Task_Handle Arrow;
+
 extern int xdc_runtime_Startup__EXECFXN__C;
 
 extern int xdc_runtime_Startup__RESETFXN__C;

@@ -18,6 +18,7 @@ static void Decode(INT8U sc);
 /* Include Semaphore to module */
 extern Semaphore_Handle KeySem;
 extern Semaphore_Handle StateSem;
+extern Semaphore_Handle ArrowSem;
 //extern Semaphore_Handle DataSem;//For use with SPI
 
 /* Global variables*/
@@ -134,7 +135,7 @@ void KeyboardInit(void){
 	 - Decodes the PS/2 scancode to its propper ascii character
 */
 void Decode(INT8U sc){
-	static INT8U keyisup=FALSE, shift = FALSE,capslock=FALSE;//, mode = 0;
+	static INT8U keyisup=FALSE, shift = FALSE,capslock=FALSE,extendcode=FALSE;//, mode = 0;
 	INT8U i=0;
 	if (!keyisup){                   /* Last data received was the up-key identifier */
 		switch (sc){
@@ -143,9 +144,9 @@ void Decode(INT8U sc){
 			keyisup = TRUE;
 			break;
 
-		case NONUMCODE :	/* No valid key yet*/
+		//case NONUMCODE :	/* No valid key yet*/
 			//keyisup = TRUE;
-			break;
+		//	break;
 
 		case LEFTSHIFT :
 			shift = TRUE;
@@ -159,7 +160,18 @@ void Decode(INT8U sc){
 			capslock=!capslock;
 			break;
 
+		case EXTENED: //caps lock
+			extendcode=TRUE;
+			break;
+
 		default:
+			if(extendcode){
+				for (i = 0; extended[i][0]!=sc && extended[i][0]; i++);
+				if (extended[i][0] == sc){
+
+					PutKeyBuf((extended[i][1]));
+				}
+			}
 			if (!shift && !capslock){//lowercase & #s
 				// do a table look-up
 				for (i = 0; unshifted[i][0]!=sc && unshifted[i][0]; i++);
@@ -284,6 +296,19 @@ INT8U StatePend(INT16U tout){
 		return key;
 	}
 }
+INT8U ArrowPend(INT16U tout){
+	Bool timeout;
+	INT8U key=0;
+	timeout=Semaphore_pend(ArrowSem,tout);
+	if(timeout==FALSE){
+		return 0;
+	}
+	else{
+		key=KeyBuffer;
+		KeyBuffer=0;
+		return key;
+	}
+}
 /*======================================================================*/
 /*  Type: Task - Private
 	Name: KeyTask
@@ -298,6 +323,9 @@ Void KeyTask(UArg a0, UArg a1){
 			KeyBuffer = key;
 			if(key<=F4&&key>=F1){
 				Semaphore_post(StateSem);
+			}
+			else if((key>=LEFTA)&&(key<=DOWNA)){
+				Semaphore_post(ArrowSem);
 			}
 			else{
 

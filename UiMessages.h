@@ -20,4 +20,5 @@ extern void AddMsgQuan(void);
 extern void AddMsgFound(void);
 extern void RemoveMsg(void);
 extern void InvMsg(void);
+extern void InvArrow(void);
 #endif /* UIMESSAGES_H_ */

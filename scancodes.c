@@ -69,7 +69,7 @@ const INT8U unshifted[][2] = {
 	{0x58,CR}, // Caps lock but shouldnt even get here
 	{0x4c,';'},
 	{0x52,'\''},//'
-	{0x5a,NOTMAPPED}, //ENTER
+	{0x5a,CR}, //ENTER
 	{0x12,NOTMAPPED}, // left shift but shouldnt even get here
 	{0x41,','},
 	{0x49,'.'},
@@ -187,3 +187,11 @@ const INT8U  shifted[][2] = {
 	{0,0}
 };
 
+const INT8U extended[][2] = {
+		{0x6B,LEFTA},
+		{0x74,RIGHTA},
+		{0x75,UPA},
+		{0x72,DOWNA},
+		{0,0}
+
+};

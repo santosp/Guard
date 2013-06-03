@@ -46,6 +46,7 @@
 #include "Ps2Keyboard.h"
 /*  Include the State info so buttons can change the states */
 extern UISTATEINFO StateInfo;
+extern INVINFO InvInfo;
 
 
 void int_to_string(INT16U x, INT8U *string);
@@ -390,4 +391,86 @@ Void DisplayTask(UArg a0, UArg a1){
 	}
 }
 
-
+Void ArrowTask(UArg a0, UArg a1){
+	INT8U key=0;
+	while(1){
+		key=ArrowPend(BIOS_WAIT_FOREVER);
+		if(StateInfo.UserState == INV){
+			switch (key){
+				case LEFTA://page up
+					if(InvInfo.PageCount==1){
+						//Do Nothing
+					}
+					else{
+						InvInfo.LastPage=InvInfo.PageCount;
+						InvInfo.PageCount++;
+						InvInfo.LastArrow=InvInfo.ArrowCount;
+						InvInfo.ArrowCount=0;
+					}
+				break;
+			/*-----------------------------------------------------------*/
+				case RIGHTA://page down
+					if(InvInfo.ItemCount<4){
+						//Do Nothing
+					}
+					else{
+						InvInfo.LastPage=InvInfo.PageCount;
+						InvInfo.PageCount++;
+						InvInfo.LastArrow=InvInfo.ArrowCount;
+						InvInfo.ArrowCount=0;
+					}
+				break;
+			/*-----------------------------------------------------------*/
+				case UPA://arrow up
+					if(InvInfo.PageCount>1){
+						if(InvInfo.ArrowCount==0){
+							InvInfo.PageCount--;
+							InvInfo.LastArrow=InvInfo.ArrowCount;
+							InvInfo.ArrowCount=4;
+							InvInfo.ItemCount=0;
+						}
+						else{
+							InvInfo.LastArrow=InvInfo.ArrowCount;
+							InvInfo.ArrowCount--;
+						}
+					}
+					else{
+						if(InvInfo.ArrowCount==0){
+							//Do Nothing
+						}
+						else{
+							InvInfo.LastArrow=InvInfo.ArrowCount;
+							InvInfo.ArrowCount--;
+						}
+					}
+				break;
+			/*-----------------------------------------------------------*/
+				case DOWNA://arrow down
+					if(InvInfo.ItemCount<4){
+						if(InvInfo.ArrowCount>=InvInfo.ItemCount){
+							//Do nothing
+						}
+						else{
+							InvInfo.LastArrow=InvInfo.ArrowCount;
+							InvInfo.ArrowCount++;
+						}
+					}
+					else if(InvInfo.ArrowCount>=4){
+						InvInfo.LastPage=InvInfo.PageCount;
+						InvInfo.PageCount++;
+						InvInfo.LastArrow=InvInfo.ArrowCount;
+						InvInfo.ArrowCount=0;
+						InvInfo.ItemCount=0;
+					}
+					else{
+						InvInfo.LastArrow=InvInfo.ArrowCount;
+						InvInfo.ArrowCount++;
+					}
+				break;
+			/*-----------------------------------------------------------*/
+				default:
+				break;
+			}
+		}
+	}
+}

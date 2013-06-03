@@ -30,12 +30,13 @@
 //Globals
 UISTATEINFO StateInfo={ADD,INIT,FALSE}; // NEED TO START IN WELCOME not Remove
 UISTATE LastState=MAIN;
-
+INVINFO InvInfo={0,0,0,0,0};
 
 extern INT8U ItemLookUp[][2];
 extern ITEMINFO ItemBlock1[25];
-/*=======*/
 
+/*=======*/
+const INT8U PageLookup[]={TPAGE1,TPAGE2,TPAGE3,TPAGE4,TPAGE5};
 
 /*
  *  ======== taskFxn ========
@@ -46,12 +47,15 @@ Void UiTask(UArg a0, UArg a1)
 	INT8U timedatebuffer[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 	INT8U upcbuffer[12]={0,0,0,0,0,0,0,0,0,0,0,0};
 	INT8U expbuffer[]={0,0,'/',0,0,'/',0,0,0};
+	INT8U quanbuffer[]={0,0,0,0};
+
 	INT8U upccount=0,inputcount=0,itemfound=0,lookupcount=0,upc_count=0;
 	INT8U clearcount=0;
 	INT8U passflag=0;
 	INT8U expcount=0;
 	INT8U quancount=0;
 	INT8U count=0;
+	INT8U testcount=0;
 	while(1){
 		switch(StateInfo.UserState){
 			case WELCOME:
@@ -141,6 +145,7 @@ Void UiTask(UArg a0, UArg a1)
 					for(clearcount=0;clearcount<MAXUPC;clearcount++){// clear buffer
 						upcbuffer[clearcount]=0;
 					}
+					//ClearString(quanbuffer);
 					upccount=0;
 					itemfound=0;
 					StateInfo.StateStatus = GETUPC;
@@ -208,13 +213,14 @@ Void UiTask(UArg a0, UArg a1)
 				/*-----------------------------------------------------------*/
 				case FOUND:
 					AddMsgFound();
+					draw_text_bmp((INT8U *)ItemBlock1[lookupcount-1].Discription,30,TPAGE1,MyFont,1);
 					StateInfo.StateStatus = EXP;
 				break;//End of FOUND
 				/*-----------------------------------------------------------*/
 				case EXP:
 					if(!passflag){
 						expcount=ReceiveExpDate(expbuffer,expcount);
-						if(expcount>=7){
+						if(expcount>=9){
 							passflag=TRUE;
 						}
 						else{}
@@ -229,17 +235,26 @@ Void UiTask(UArg a0, UArg a1)
 						StateInfo.StateStatus = QUAN;
 						passflag=FALSE;
 						AddMsgQuan();
+						count=0;
+						expcount=0;
 					}
 				break;//End of FOUND
 				/*-----------------------------------------------------------*/
 				case QUAN:
 					if(!passflag){
 
+						count=ReceiveQuan(quanbuffer,count);
+						if(count>=4){
+							passflag=TRUE;
+						}
 					}
 					else{
+						//function to turn string to int
+					quancount=(INT8U) StringtoDec(quanbuffer);
 					ItemBlock1[lookupcount-1].Quantity=+quancount;
 					ItemLookUp[lookupcount-1][0]=ItemBlock1[lookupcount-1].Quantity;
 					StateInfo.StateStatus = INIT;
+					passflag=FALSE;
 					}
 				break;//End of FOUND
 				/*-----------------------------------------------------------*/
@@ -354,14 +369,73 @@ Void UiTask(UArg a0, UArg a1)
 				case INIT:
 					//Initialize state
 					InvMsg();
-					StateInfo.StateStatus = GETUPC;
+					StateInfo.StateStatus = INVALID;
 					//draw_text_bmp((INT8U *)"INV STATE ",16,PAGE5,MyFont,1);
 				break;//End of INIT State
 				/*-----------------------------------------------------------*/
 				case GETUPC:
+					if(InvInfo.PageCount>InvInfo.LastPage){
+						glcd_blank_page(LPAGE1);
+						glcd_blank_page(LPAGE2);
+						glcd_blank_page(LPAGE3);
+						glcd_blank_page(LPAGE4);
+						glcd_blank_page(LPAGE5);
+						if(InvInfo.ItemCount<4){//Possibly Don't Need This conditional
+							for(count=testcount;(count<25)&&(InvInfo.ItemCount<5);count++){
+								if(ItemLookUp[count][0]>0){
+									draw_text_bmp((ItemBlock1[count].Discription),10,PageLookup[InvInfo.ItemCount],MyFont,1);
+									draw_text_bmp(ItemBlock1[count].Experation,75,PageLookup[InvInfo.ItemCount],MyFont,1);
+									draw_text_bmp((INT8U *)"->",1,PageLookup[InvInfo.ArrowCount],MyFont,1);
+									InvInfo.ItemCount++;
+									testcount=count;
+								}else{/*Do Nothing*/}
+							}
+						}else{/*Do Nothing*/}
+					}
+					else if(InvInfo.PageCount<InvInfo.LastPage){
+						glcd_blank_page(LPAGE1);
+						glcd_blank_page(LPAGE2);
+						glcd_blank_page(LPAGE3);
+						glcd_blank_page(LPAGE4);
+						glcd_blank_page(LPAGE5);
+						if(InvInfo.ItemCount<4){//Possibly Don't Need This conditional
+							for(count;(count>0)&&(InvInfo.ItemCount<5);count--){
+								if(ItemLookUp[count][0]>0){
+									draw_text_bmp(ItemBlock1[count].Discription,10,PageLookup[InvInfo.ItemCount],MyFont,1);
+									draw_text_bmp(ItemBlock1[count].Experation,75,PageLookup[InvInfo.ItemCount],MyFont,1);
+									draw_text_bmp((INT8U *)"->",1,PageLookup[InvInfo.ArrowCount],MyFont,1);
+									InvInfo.ItemCount++;
+									testcount=count;
+								}else{/*Do Nothing*/}
+							}
+						}else{/*Do Nothing*/}
+					}
+					else{
+						//InvInfo.ItemCount=0;
+
+					}
+					if(InvInfo.LastArrow!=InvInfo.ArrowCount){
+						//glcd_blank_pagexy(PageLookup[InvInfo.LastArrow],1,8);
+						draw_text_bmp((INT8U *)"  ",1,PageLookup[InvInfo.LastArrow],MyFont,1);
+						draw_text_bmp((INT8U *)"->",1,PageLookup[InvInfo.ArrowCount],MyFont,1);
+					}
 				break;//End of GETUPC State
 				/*-----------------------------------------------------------*/
 				case INVALID:
+					if(InvInfo.ItemCount<4){//Possibly Don't Need This conditional
+						for(count=0;(count<25)&&(InvInfo.ItemCount<5);count++){
+							if(ItemLookUp[count][0]>0){
+								draw_text_bmp((ItemBlock1[count].Discription),10,PageLookup[InvInfo.ItemCount],MyFont,1);
+								draw_text_bmp(ItemBlock1[count].Experation,75,PageLookup[InvInfo.ItemCount],MyFont,1);
+								draw_text_bmp((INT8U *)"->",1,PageLookup[InvInfo.ArrowCount],MyFont,1);
+								InvInfo.ItemCount++;
+								testcount=count;
+							}else{/*Do Nothing*/}
+						}
+					}else{
+						StateInfo.StateStatus = GETUPC;
+						//testcount--;
+					}
 					////invalid user input, i.e. non number characters,
 				break;//End of INVALID state
 				/*-----------------------------------------------------------*/
