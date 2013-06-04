@@ -29,7 +29,7 @@ typedef struct{
 	INT8U Discription[16];
 	INT8U Experation[8];
 	INT8U Timestamp[8];
-	INT8U UPC[11];
+	INT8U UPC[12];
 	INT8U Quantity;
 }ITEMINFO;
 
@@ -39,6 +39,7 @@ typedef struct{
 	INT8U LastPage;
 	INT8U ItemCount;
 	INT8U LastArrow;
+	INT8U LastItemLocation;
 }INVINFO;
 
 /* Constant Defines */

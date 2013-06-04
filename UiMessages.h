@@ -21,4 +21,5 @@ extern void AddMsgFound(void);
 extern void RemoveMsg(void);
 extern void InvMsg(void);
 extern void InvArrow(void);
+void InvSelectMsg(INT8U item);
 #endif /* UIMESSAGES_H_ */

@@ -292,31 +292,65 @@ Void StateTask(UArg a0, UArg a1){
 			/*======================================================================*/
 
 			case INV:
-				switch(key){
-					case F1://Back to Main Menu
-						//Change State
-						////gatetKey = GateMutexPri_enter(gatemutexPri);
-						StateInfo.UserState = MAIN;
-						//set re-initialize variable
-						StateInfo.StateStatus = INIT;
-						////GateMutexPri_leave(gateMutexPri,gateKey);
+				switch (StateInfo.StateStatus){
+				case FIND:
+					switch(key){
+						case F1://Back to inventory
+							//Change State
+							////gatetKey = GateMutexPri_enter(gatemutexPri);
+							//StateInfo.UserState = MAIN;
+							//set re-initialize variable
+							StateInfo.StateStatus = GETUPC;
+							////GateMutexPri_leave(gateMutexPri,gateKey);
 
-					break;
-					/*-----------------------------------------------------------*/
-					case F2:
-						//Blank so do nothing
-					break;
-					/*-----------------------------------------------------------*/
-					case F3:
-						//Blank so do nothing
-					break;
-					/*-----------------------------------------------------------*/
-					case F4:
-						//Blank so do nothing
-					break;
-					/*-----------------------------------------------------------*/
-					default:
-					break;
+						break;
+						/*-----------------------------------------------------------*/
+						case F2:
+							//Blank so do nothing
+
+						/*-----------------------------------------------------------*/
+						case F3:
+							//Blank so do nothing
+
+						/*-----------------------------------------------------------*/
+						case F4:
+							//Blank so do nothing
+
+						/*-----------------------------------------------------------*/
+						default:
+						break;
+					}
+				break;
+
+				default:
+
+					switch(key){
+						case F1://Back to Main Menu
+							//Change State
+							////gatetKey = GateMutexPri_enter(gatemutexPri);
+							StateInfo.UserState = MAIN;
+							//set re-initialize variable
+							StateInfo.StateStatus = INIT;
+							////GateMutexPri_leave(gateMutexPri,gateKey);
+
+						break;
+						/*-----------------------------------------------------------*/
+						case F2:
+							//Blank so do nothing
+						break;
+						/*-----------------------------------------------------------*/
+						case F3:
+							//Blank so do nothing
+						break;
+						/*-----------------------------------------------------------*/
+						case F4:
+							//Blank so do nothing
+						break;
+						/*-----------------------------------------------------------*/
+						default:
+						break;
+					}
+				break;
 				}
 			break;//End of INV State
 			/*======================================================================*/
@@ -398,7 +432,7 @@ Void ArrowTask(UArg a0, UArg a1){
 		if(StateInfo.UserState == INV){
 			switch (key){
 				case LEFTA://page up
-					if(InvInfo.PageCount==1){
+					if(InvInfo.PageCount==0){
 						//Do Nothing
 					}
 					else{
@@ -406,6 +440,7 @@ Void ArrowTask(UArg a0, UArg a1){
 						InvInfo.PageCount++;
 						InvInfo.LastArrow=InvInfo.ArrowCount;
 						InvInfo.ArrowCount=0;
+						InvInfo.ItemCount=0;
 					}
 				break;
 			/*-----------------------------------------------------------*/
@@ -418,11 +453,12 @@ Void ArrowTask(UArg a0, UArg a1){
 						InvInfo.PageCount++;
 						InvInfo.LastArrow=InvInfo.ArrowCount;
 						InvInfo.ArrowCount=0;
+						InvInfo.ItemCount=0;
 					}
 				break;
 			/*-----------------------------------------------------------*/
 				case UPA://arrow up
-					if(InvInfo.PageCount>1){
+					if(InvInfo.PageCount>0){
 						if(InvInfo.ArrowCount==0){
 							InvInfo.PageCount--;
 							InvInfo.LastArrow=InvInfo.ArrowCount;
@@ -447,7 +483,7 @@ Void ArrowTask(UArg a0, UArg a1){
 			/*-----------------------------------------------------------*/
 				case DOWNA://arrow down
 					if(InvInfo.ItemCount<4){
-						if(InvInfo.ArrowCount>=InvInfo.ItemCount){
+						if(InvInfo.ItemCount>=InvInfo.ArrowCount){
 							//Do nothing
 						}
 						else{

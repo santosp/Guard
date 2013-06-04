@@ -30,13 +30,14 @@
 //Globals
 UISTATEINFO StateInfo={ADD,INIT,FALSE}; // NEED TO START IN WELCOME not Remove
 UISTATE LastState=MAIN;
-INVINFO InvInfo={0,0,0,0,0};
+INVINFO InvInfo={0,0,0,0,0,0};
 
 extern INT8U ItemLookUp[][2];
 extern ITEMINFO ItemBlock1[25];
 
 /*=======*/
 const INT8U PageLookup[]={TPAGE1,TPAGE2,TPAGE3,TPAGE4,TPAGE5};
+const INT8U PageLookupRev[]={TPAGE5,TPAGE4,TPAGE3,TPAGE2,TPAGE1};
 
 /*
  *  ======== taskFxn ========
@@ -370,11 +371,22 @@ Void UiTask(UArg a0, UArg a1)
 					//Initialize state
 					InvMsg();
 					StateInfo.StateStatus = INVALID;
+					count=0;
+					InvInfo.ArrowCount=0;
+					InvInfo.ItemCount=0;
+					InvInfo.LastArrow=0;
+					InvInfo.LastItemLocation=0;
+					InvInfo.LastPage=0;
+					InvInfo.PageCount=0;
 					//draw_text_bmp((INT8U *)"INV STATE ",16,PAGE5,MyFont,1);
 				break;//End of INIT State
 				/*-----------------------------------------------------------*/
 				case GETUPC:
-					if(InvInfo.PageCount>InvInfo.LastPage){
+					key=KeyPend(0);
+					if(key==CR){
+						StateInfo.StateStatus=FIND;
+					}
+					if(InvInfo.PageCount>InvInfo.LastPage){//Down Arrow
 						glcd_blank_page(LPAGE1);
 						glcd_blank_page(LPAGE2);
 						glcd_blank_page(LPAGE3);
@@ -388,26 +400,41 @@ Void UiTask(UArg a0, UArg a1)
 									draw_text_bmp((INT8U *)"->",1,PageLookup[InvInfo.ArrowCount],MyFont,1);
 									InvInfo.ItemCount++;
 									testcount=count;
+									InvInfo.LastItemLocation=count;
 								}else{/*Do Nothing*/}
+								InvInfo.LastPage=InvInfo.PageCount;
+								testcount=count;
 							}
 						}else{/*Do Nothing*/}
 					}
-					else if(InvInfo.PageCount<InvInfo.LastPage){
+					else if(InvInfo.PageCount<InvInfo.LastPage){//Up Arrow
 						glcd_blank_page(LPAGE1);
 						glcd_blank_page(LPAGE2);
 						glcd_blank_page(LPAGE3);
 						glcd_blank_page(LPAGE4);
 						glcd_blank_page(LPAGE5);
 						if(InvInfo.ItemCount<4){//Possibly Don't Need This conditional
-							for(count;(count>0)&&(InvInfo.ItemCount<5);count--){
+							for(count=(InvInfo.LastItemLocation-1);(count>0)&&(InvInfo.ItemCount<5);count--){
 								if(ItemLookUp[count][0]>0){
-									draw_text_bmp(ItemBlock1[count].Discription,10,PageLookup[InvInfo.ItemCount],MyFont,1);
-									draw_text_bmp(ItemBlock1[count].Experation,75,PageLookup[InvInfo.ItemCount],MyFont,1);
-									draw_text_bmp((INT8U *)"->",1,PageLookup[InvInfo.ArrowCount],MyFont,1);
+									draw_text_bmp(ItemBlock1[count].Discription,10,PageLookupRev[InvInfo.ItemCount],MyFont,1);
+									draw_text_bmp(ItemBlock1[count].Experation,75,PageLookupRev[InvInfo.ItemCount],MyFont,1);
+									draw_text_bmp((INT8U *)"->",1,PageLookupRev[InvInfo.ArrowCount],MyFont,1);
+									if(InvInfo.ItemCount==0){
+										//count++;
+										testcount=count;
+										testcount++;
+
+									}else{/*Do nothing*/}
 									InvInfo.ItemCount++;
-									testcount=count;
+									//testcount=count;
+									InvInfo.LastItemLocation=count;
 								}else{/*Do Nothing*/}
+								InvInfo.LastPage=InvInfo.PageCount;
+								//count++;
+								//testcount=count;
 							}
+							//count++;
+							//testcount=count;
 						}else{/*Do Nothing*/}
 					}
 					else{
@@ -430,19 +457,33 @@ Void UiTask(UArg a0, UArg a1)
 								draw_text_bmp((INT8U *)"->",1,PageLookup[InvInfo.ArrowCount],MyFont,1);
 								InvInfo.ItemCount++;
 								testcount=count;
+								InvInfo.LastItemLocation=count;
 							}else{/*Do Nothing*/}
 						}
 					}else{
 						StateInfo.StateStatus = GETUPC;
+						InvInfo.LastItemLocation=count;
+						testcount=count;
 						//testcount--;
 					}
 					////invalid user input, i.e. non number characters,
 				break;//End of INVALID state
 				/*-----------------------------------------------------------*/
 				case FIND:
+					glcd_blank_page(LPAGE1);
+					glcd_blank_page(LPAGE2);
+					glcd_blank_page(LPAGE3);
+					glcd_blank_page(LPAGE4);
+					glcd_blank_page(LPAGE5);
+					glcd_blank_page(LPAGE6);
+					glcd_blank_page(LPAGE7);
+
+					InvSelectMsg((InvInfo.ArrowCount+1)+(InvInfo.PageCount*5));
+					StateInfo.StateStatus = FOUND;
 				break;//End of FIND State
 				/*-----------------------------------------------------------*/
 				case FOUND:
+					//wait here till user presses back
 				break;//End of FOUND State
 				/*-----------------------------------------------------------*/
 				case NOMATCH:

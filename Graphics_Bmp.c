@@ -122,3 +122,40 @@ void GlcdDispTime(INT8U hrs, INT8U min, INT8U sec){
 
 	draw_text_bmp(time_string,1,1,MyFont,1);
 }
+
+void int_to_string(INT16U x, INT8U *string){
+	int i=0;
+	int y=x;
+	int temp_var=0;
+#if 1
+	if(x==0){
+		string[i]=x+48;
+		string[i+1]='\0';
+	}
+#endif
+	else{
+		while(y>0){
+			temp_var=(y%10);
+			string[i]=48+temp_var;
+			y=y/10;
+			i++;
+		}
+		string[i]='\0';
+	}
+
+
+}
+
+void string_rev(INT8U *string){
+	char temp_string[11];
+	int i,w;
+	for(i=0;string[i]!='\0';i++){
+		temp_string[i]=string[i];
+	}
+
+	i--;
+	for(w=0;string[w]!='\0';w++){
+		string[w]=temp_string[i];
+		i--;
+	}
+}

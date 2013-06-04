@@ -6,6 +6,9 @@
  */
 
 #include "UiMessages.h"
+#include "Ps2Keyboard.h"
+extern INT8U ItemLookUp[][2];
+extern ITEMINFO ItemBlock1[25];
 
 void WelcomeMsg(void){
 	draw_text_bmp((INT8U *)"Welcome ",44,TPAGE0,MyFont,1);
@@ -255,4 +258,27 @@ void InvMsg(void){
 }
 void InvArrow(void){
 	draw_text_bmp((INT8U *)"->",33,FPAGE6,MyFont,1);
+}
+
+void InvSelectMsg(INT8U item){
+	INT8U quanstring[5];
+	draw_text_bmp((INT8U *)"Name",1,FPAGE1,MyFont,1);
+	draw_text_bmp(ItemBlock1[item].Discription,50,FPAGE1,MyFont,1);
+	draw_text_bmp((INT8U *)"Expiration",1,FPAGE2,MyFont,1);
+	draw_text_bmp(ItemBlock1[item].Experation,50,FPAGE2,MyFont,1);
+	draw_text_bmp((INT8U *)"TimeStamp:",1,FPAGE3,MyFont,1);
+	draw_text_bmp(ItemBlock1[item].Timestamp,50,FPAGE3,MyFont,1);
+	draw_text_bmp((INT8U *)"Quan:",1,FPAGE4,MyFont,1);
+	int_to_string(ItemBlock1[item].Quantity,quanstring);
+	string_rev(quanstring);
+	//draw_text_char(quanstring,1,FPAGE4,MyFont,1);
+	draw_text_bmp(quanstring,50,FPAGE4,MyFont,1);
+	draw_text_bmp((INT8U *)"UPC:",1,FPAGE5,MyFont,1);
+	draw_text_bmp(ItemBlock1[item].UPC,50,FPAGE5,MyFont,1);
+	draw_line(1,PAGE6,128,PAGE6,1);
+	draw_line(31,PAGE6,31,64,1);
+	draw_line(63,PAGE6,63,64,1);
+	draw_line(95,PAGE6,95,64,1);
+	draw_text_bmp((INT8U *)"Back",1,FPAGE7,MyFont,1);
+
 }

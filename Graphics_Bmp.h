@@ -62,5 +62,8 @@ extern bounding_box_t draw_text_bmp(INT8U *string, unsigned char x, unsigned cha
 bounding_box_t draw_char_bmp(unsigned char c, unsigned char x, unsigned char y,const unsigned char *font) ;
 
 extern void GlcdDispTime(INT8U hrs, INT8U min, INT8U sec); //Source Todd Morton, Implemented by Paul Santos
+void int_to_string(INT16U x, INT8U *string);
+void string_rev(INT8U *string);
+
 
 #endif /* GRAPHICS_BMP_H_ */
